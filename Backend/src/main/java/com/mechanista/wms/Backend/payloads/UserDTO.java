@@ -25,6 +25,5 @@ public record UserDTO(
         String email,
 
         Set<UserRole> role,
-        LocalDate creation_date
-) {
+        LocalDate creation_date) {
 }

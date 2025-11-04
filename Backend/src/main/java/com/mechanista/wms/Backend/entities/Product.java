@@ -28,5 +28,15 @@ public class Product {
     private int stock;
 
     @Column(nullable = false)
-    private LocalDate insertion_date;
+    private LocalDate insertionDate;
+
+    public Product(String productCode, String description, String measurement, double weight, double price, int stock, LocalDate insertionDate) {
+        this.productCode = productCode;
+        this.description = description;
+        this.measurement = measurement;
+        this.weight = weight;
+        this.price = price;
+        this.stock = stock;
+        this.insertionDate = insertionDate;
+    }
 }

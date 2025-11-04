@@ -18,4 +18,9 @@ public class Section {
 
     private String sectionCode;
     private String description;
+
+    public Section(String sectionCode, String description) {
+        this.sectionCode = sectionCode;
+        this.description = description;
+    }
 }

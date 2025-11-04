@@ -21,11 +21,11 @@ public class Pallet {
 
     @ManyToOne
     @JoinColumn(name = "id_section", nullable = false)
-    private Section id_section;
+    private Section sectionId;
 
-    public Pallet(String palletCode, Section id_section, double maxRate) {
+    public Pallet(String palletCode, Section sectionId, double maxRate) {
         this.palletCode = palletCode;
-        this.id_section = id_section;
+        this.sectionId = sectionId;
         this.maxRate = maxRate;
     }
 }

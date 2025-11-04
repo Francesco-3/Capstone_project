@@ -20,10 +20,10 @@ public class Rack {
 
     @ManyToOne
     @JoinColumn(name = "id_section", nullable = false)
-    private Section id_section;
+    private Section sectionId;
 
-    public Rack(String shelfCode, Section id_section) {
+    public Rack(String shelfCode, Section sectionId) {
         this.shelfCode = shelfCode;
-        this.id_section = id_section;
+        this.sectionId = sectionId;
     }
 }

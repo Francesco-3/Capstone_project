@@ -20,36 +20,36 @@ public class Movement {
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
-    private User id_user;
+    private User userId;
 
     @ManyToOne
     @JoinColumn(name = "id_shelf")
-    private Shelf id_shelf;
+    private Shelf shelfId;
 
     @ManyToOne
     @JoinColumn(name = "id_pallet")
-    private Pallet id_pallet;
+    private Pallet palletId;
 
     @ManyToOne
     @JoinColumn(name = "id_product", nullable = false)
-    private Product id_product;
+    private Product productId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MovementType movementType;
 
     private int quantity;
-    private LocalDate date_time;
+    private LocalDate date;
     private String notes;
 
-    public Movement(User id_user, MovementType movementType, int quantity, Shelf id_shelf, Pallet id_pallet, Product id_product, LocalDate date_time, String notes) {
-        this.id_product = id_product;
-        this.id_user = id_user;
+    public Movement(User userId, MovementType movementType, int quantity, Shelf shelfId, Pallet palletId, Product id_product, LocalDate date, String notes) {
+        this.productId = productId;
+        this.userId = userId;
         this.movementType = movementType;
         this.quantity = quantity;
-        this.id_shelf = id_shelf;
-        this.id_pallet = id_pallet;
-        this.date_time = date_time;
+        this.shelfId = shelfId;
+        this.palletId = palletId;
+        this.date = date;
         this.notes = notes;
     }
 }

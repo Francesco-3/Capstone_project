@@ -18,12 +18,12 @@ public class Shelf {
 
     @ManyToOne
     @JoinColumn(name = "id_rack", nullable = false)
-    private Rack id_rack;
+    private Rack rackId;
     private int shelfNumber;
     private double capacity;
 
-    public Shelf(Rack id_rack, int shelfNumber, double capacity) {
-        this.id_rack = id_rack;
+    public Shelf(Rack rackId, int shelfNumber, double capacity) {
+        this.rackId = rackId;
         this.shelfNumber = shelfNumber;
         this.capacity = capacity;
     }

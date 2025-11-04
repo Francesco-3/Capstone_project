@@ -20,20 +20,20 @@ public class Collocation {
 
     @ManyToOne
     @JoinColumn(name = "id_product")
-    private Product id_product;
+    private Product productId;
 
     @ManyToOne
     @JoinColumn(name = "id_shelf")
-    private Shelf id_shelf;
+    private Shelf shelfId;
 
     @ManyToOne
     @JoinColumn(name = "id_pallet")
-    private Pallet id_pallet;
+    private Pallet palletId;
 
-    public Collocation(int quantity, Product id_product, Shelf id_shelf, Pallet id_pallet) {
+    public Collocation(int quantity, Product productId, Shelf shelfId, Pallet palletId) {
         this.quantity = quantity;
-        this.id_product = id_product;
-        this.id_shelf = id_shelf;
-        this.id_pallet = id_pallet;
+        this.productId = productId;
+        this.shelfId = shelfId;
+        this.palletId = palletId;
     }
 }
