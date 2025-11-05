@@ -12,5 +12,5 @@ public interface ShelfRepository extends JpaRepository<Shelf, UUID> {
     Optional<Shelf> findByRackId(Rack rackId);
     Optional<Shelf> findByCapacity(double capacity);
 
-    List<Shelf> findByShelfNumber(int shelfNumber);
+    Optional<Shelf> findByShelfNumber(int shelfNumber);
 }

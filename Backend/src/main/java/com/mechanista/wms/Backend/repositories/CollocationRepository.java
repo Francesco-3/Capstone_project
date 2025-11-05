@@ -11,7 +11,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CollocationRepository extends JpaRepository<Collocation, UUID> {
-    List<Collocation> findAllByProductId(Product productId);
-    Optional<Collocation> findByShelfId(Shelf shelfId);
-    Optional<Collocation> findByPalletId(Pallet palletId);
+    List<Collocation> findByProductId(Product productId);
+    List<Collocation> findByShelfId(Shelf shelfId);
+    List<Collocation> findByPalletId(Pallet palletId);
+
+    Optional<Collocation> findByProductIdAndShelfIdAndPalletId(Product productId, Shelf shelfId, Pallet palletId);
 }

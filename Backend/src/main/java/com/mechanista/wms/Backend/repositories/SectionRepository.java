@@ -4,8 +4,9 @@ import com.mechanista.wms.Backend.entities.Section;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SectionRepository extends JpaRepository<Section, UUID> {
-    List<Section> findBySectionCode(String sectionCode);
+    Optional<Section> findBySectionCode(String sectionCode);
 }

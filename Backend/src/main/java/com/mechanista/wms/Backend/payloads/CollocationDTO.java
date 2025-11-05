@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record Collection(
+public record CollocationDTO(
         @NotNull(message = "La quantità di pezzi è obbligatoria!")
         Integer quantity,
 

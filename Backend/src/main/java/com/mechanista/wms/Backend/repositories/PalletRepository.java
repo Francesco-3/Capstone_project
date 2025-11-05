@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PalletRepository extends JpaRepository<Pallet, UUID> {
-    List<Pallet> findByPalletCode(String palletCode);
+    Optional<Pallet> findByPalletCode(String palletCode);
 
     Optional<Pallet> findBySectionId(Section sectionId);
 }
