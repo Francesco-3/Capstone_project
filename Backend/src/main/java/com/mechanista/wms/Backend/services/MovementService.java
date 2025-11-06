@@ -1,6 +1,7 @@
 package com.mechanista.wms.Backend.services;
 
 import com.mechanista.wms.Backend.entities.*;
+import com.mechanista.wms.Backend.entities.enums.MovementType;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.exceptions.NotFoundException;
 import com.mechanista.wms.Backend.payloads.MovementDTO;
@@ -13,7 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -23,47 +24,67 @@ public class MovementService {
     private MovementRepository movementRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
-    //CREATE
-    public Movement saveMovement(MovementDTO payload) {
-        User user = userRepository.findById(payload.userId())
-                .orElseThrow(() -> new RuntimeException("Utente " + payload.userId() + " non trovato!"));
+    @Autowired
+    private ShelfService shelfService;
 
-        Product product = productRepository.findById(payload.productId())
-                .orElseThrow(() -> new RuntimeException("Prodotto " + payload.productId() + " non trovato!"));
+    @Autowired
+    private PalletService palletService;
 
-        // cerco i movimenti disponibili
-        List<Movement> assignedMovement = List.of();
-        if (payload.movementType() != null && !payload.movementType().isEmpty()) {
-            assignedMovement = payload.movementType().stream()
-                    .map(movementType -> movementRepository.findByMovementType(movementType)
-                            .orElseThrow(() -> new RuntimeException("Il movimento " + movementType + " non si trova nel database!")))
-                    .toList();
+    // mappatura delle entità, questo metodo non salva i dati nel db, ma li prepara e li valida
+    private Movement mapToEntity(MovementDTO payload, Optional<UUID> existingMovementId) {
+        // recupero il prodotto
+        Product product = productService.findById(payload.productId());
+
+        // recupero l'utente (obbligatoriamente)
+        User user = userService.findById(payload.userId());
+
+        // recupero la mensola o il pallet
+        Shelf shelf = payload.shelfId() != null ? shelfService.findById(payload.shelfId()) : null;
+        Pallet pallet = payload.palletId() != null ? palletService.findById(payload.palletId()) : null;
+
+        // controllo che almeno uno dei due venga popolato
+        if (shelf == null && pallet == null) {
+            throw new BadRequestException("Devi specificare la mensola o il pallet di destinazione del prodotto!");
         }
 
-        // se non ne ha, assegno un tipo di movimento
-//        if (assignedMovement.isEmpty()) {
-//            Movement movement = movementRepository.findByMovementType(MovementType.WITHDRAWAL)
-//                    .orElseGet(() -> movementRepository.save(new Movement(MovementType.ADDED)));
-//            assignedMovement = List.of(movement);
-//        }
+        if (shelf != null && pallet != null) {
+            throw new BadRequestException("Il movimento può riguardare solo una destinazione alla volta!");
+        }
 
-        // popolo i dati
+        // controllo duplicati
+        Optional<Movement> existingMovement = movementRepository
+                .findByUserIdAndProductIdAndShelfIdAndPalletId(user, product, shelf, pallet);
+
+        if (existingMovement.isPresent()) {
+            UUID found = existingMovement.get().getId_movement();
+            if (existingMovementId.isEmpty() || !existingMovementId.get().equals(found)) {
+                throw new BadRequestException("Esiste già un movimento per questo prodotto e utente nella stessa posizione!");
+            }
+        }
+
         Movement newMovement = new Movement();
-        newMovement.setUserId(user);
         newMovement.setProductId(product);
+        newMovement.setShelfId(shelf);
+        newMovement.setUserId(user);
         newMovement.setQuantity(payload.quantity());
+        newMovement.setMovementType(payload.movementType());
         newMovement.setDate(payload.date_time());
-//        newMovement.setMovementType(assignedMovement);
 
-        // salvo
-        Movement saveMovement = this.movementRepository.save(newMovement);
-        log.info("L'utente " + saveMovement.getUserId() + " ha compiuto un '" + saveMovement.getMovementType() + "'!");
-        return saveMovement;
+        return newMovement;
+    }
+
+    // CREATE
+    public Movement saveMovement(MovementDTO payload) {
+        Movement newMovement = this.mapToEntity(payload, Optional.empty());
+        Movement saved = movementRepository.save(newMovement);
+
+        log.info("Movimento creato con successo dall'utente " + saved.getUserId() + " per il prodotto " + saved.getProductId());
+        return saved;
     }
 
     // READ
@@ -75,41 +96,39 @@ public class MovementService {
         return movementRepository.findById(movementId).orElseThrow(() -> new NotFoundException(movementId));
     }
 
-    public Movement findByUserId(User userId) {
-        return movementRepository.findByUserId(userId).orElseThrow(() ->
-                new NotFoundException("L'utente " + userId + " non è stato trovato!"));
+    public Page<Movement> findByUserId(UUID userId, Pageable pageable) {
+        User user = userService.findById(userId);
+        return movementRepository.findByUserId(user, pageable);
     }
 
-    public Movement findByDate(LocalDate date) {
-        return movementRepository.findByDate(date).orElseThrow(() ->
-                new NotFoundException("La data " + date + " non è stata trovata!"));
+    public Page<Movement> findByMovementType(MovementType type, Pageable pageable) {
+        return movementRepository.findByMovementType(type, pageable);
     }
 
-    public Movement findByProductId(Product productId) {
-        return movementRepository.findByProductId(productId).orElseThrow(() ->
-                new NotFoundException("Il prodotto " + productId + "non è stato trovato!"));
+    public Page<Movement> findByDate(LocalDate date, Pageable pageable) {
+        return movementRepository.findByDate(date, pageable);
+    }
+
+    public Page<Movement> findByProductId(Product product, Pageable pageable) {
+        return movementRepository.findByProductId(product, pageable);
     }
 
     //UPDATE
     public Movement findByIdAndUpdate(UUID movementId, MovementDTO payload) {
-        Movement found = this.findById(movementId);
+        Movement found = this.mapToEntity(payload, Optional.of(movementId));
 
-        //aggiungere il controllo
+        found.setId_movement(movementId);
+        found = movementRepository.save(found);
 
-        found.setDate(payload.date_time());
-        found.setQuantity(payload.quantity());
-        found.setNotes(payload.notes());
-
-        Movement modifierMovement = this.movementRepository.save(found);
-        log.info("L'utente " + modifierMovement.getUserId() + " ha aggiornato un movimento!");
-        return modifierMovement;
+        log.info("Movimento aggiornato correttamente!");
+        return found;
     }
 
     // DELETE
-    public void findIdAndDelete(UUID movementId) {
+    public void findByIdAndDelete(UUID movementId) {
         Movement found = this.findById(movementId);
-        this.movementRepository.delete(found);
 
-        log.info("L'utente " + found.getUserId() + " ha eliminato un movimento!");
+        movementRepository.delete(found);
+        log.info("L'utente " + found.getUserId() + " ha eliminato il movimento " + found.getId_movement());
     }
 }

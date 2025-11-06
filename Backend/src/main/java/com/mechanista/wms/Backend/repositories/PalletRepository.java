@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface PalletRepository extends JpaRepository<Pallet, UUID> {
     Optional<Pallet> findByPalletCode(String palletCode);
-
     Optional<Pallet> findBySectionId(Section sectionId);
+
+    boolean existsById(UUID uuid);
 }

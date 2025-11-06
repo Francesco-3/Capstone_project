@@ -85,10 +85,11 @@ public class ShelfService {
         Shelf found = this.findById(shelfId);
 
         // controllo se lo shelf è presente in qualche collocation
-        int collocationCount = collocationRepository.findByShelfId(found).size();
-        if (collocationCount > 0) {
-            throw new BadRequestException("Impossibile eliminare la mensola '" + found.getShelfNumber() +
-                    " perché è associata a " + collocationCount + " collocazioni di prodotti.");
+        if (collocationRepository.existsByShelfId(found)) {
+            throw new BadRequestException(
+                    "Impossibile eliminare la mensola " + found.getId_shelf() +
+                            " perché contiene già un prodotto!"
+            );
         }
 
         // elimino

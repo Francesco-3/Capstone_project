@@ -16,6 +16,7 @@ public class Rack {
     @GeneratedValue
     private UUID id_rack;
 
+    @Column(unique = true)
     private String shelfCode;
 
     @ManyToOne

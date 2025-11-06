@@ -19,7 +19,7 @@ public record MovementDTO(
         UUID productId,
 
         @NotNull(message = "Il tipo di movimento è obbligatorio! (Prelievo, Aggiunta)")
-        Set<MovementType> movementType,
+        MovementType movementType,
 
         @NotNull(message = "La quantità è obbligatoria!")
         Integer quantity,

@@ -16,6 +16,7 @@ public class Section {
     @GeneratedValue
     private UUID id_section;
 
+    @Column(unique = true)
     private String sectionCode;
     private String description;
 

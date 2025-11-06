@@ -19,6 +19,8 @@ public class Shelf {
     @ManyToOne
     @JoinColumn(name = "id_rack", nullable = false)
     private Rack rackId;
+
+    @Column(unique = true)
     private int shelfNumber;
     private double capacity;
 

@@ -16,7 +16,9 @@ public class Pallet {
     @GeneratedValue
     private UUID id_pallet;
 
+    @Column(unique = true)
     private String palletCode;
+
     private double maxRate;
 
     @ManyToOne

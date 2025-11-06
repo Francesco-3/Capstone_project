@@ -1,10 +1,7 @@
 package com.mechanista.wms.Backend.payloads;
 
 import com.mechanista.wms.Backend.entities.enums.UserRole;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -24,6 +21,8 @@ public record UserDTO(
         @Size(max = 50, message = "L'email non può superare i 50 caratteri.")
         String email,
 
-        Set<UserRole> role,
+        @NotNull(message = "Il ruolo è obbligatorio")
+        UserRole role,
+
         LocalDate creation_date) {
 }

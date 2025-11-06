@@ -95,10 +95,11 @@ public class PalletService {
         Pallet found = this.findById(palletId);
 
         // controllo se il pallet è presente in qualche collocazione
-        int collocationCount = collocationRepository.findByPalletId(found).size();
-        if (collocationCount > 0) {
-            throw new BadRequestException("Impossibile eliminare il pallet " + found.getPalletCode() +
-                    " perchè è associato a " + collocationCount + " collocazioni di pordotti!");
+        if (collocationRepository.existsByPalletId(found)) {
+            throw new BadRequestException(
+                    "Impossibile eliminare la mensola " + found.getId_pallet() +
+                            " perché contiene già un prodotto!"
+            );
         }
 
         // elimino

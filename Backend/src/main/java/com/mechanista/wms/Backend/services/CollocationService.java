@@ -1,20 +1,15 @@
 package com.mechanista.wms.Backend.services;
 
-import com.mechanista.wms.Backend.entities.Collocation;
-import com.mechanista.wms.Backend.entities.Pallet;
-import com.mechanista.wms.Backend.entities.Product;
-import com.mechanista.wms.Backend.entities.Shelf;
+import com.mechanista.wms.Backend.entities.*;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.exceptions.NotFoundException;
 import com.mechanista.wms.Backend.payloads.CollocationDTO;
 import com.mechanista.wms.Backend.repositories.CollocationRepository;
-import com.mechanista.wms.Backend.repositories.PalletRepository;
-import com.mechanista.wms.Backend.repositories.ProductRepository;
-import com.mechanista.wms.Backend.repositories.ShelfRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,43 +22,41 @@ public class CollocationService {
     private CollocationRepository collocationRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @Autowired
-    private ShelfRepository shelfRepository;
+    private ShelfService shelfService;
 
     @Autowired
-    private PalletRepository palletRepository;
+    private PalletService palletService;
 
     // metodo per trovare le entità correlate e popolare l'oggetto Collocation
     private Collocation mapToEntity(CollocationDTO payload, Optional<UUID> existingCollocationId) {
 
         // cerco il prodotto
-        Product product = productRepository.findById(payload.productId())
-                .orElseThrow(() -> new NotFoundException("Prodotto " + payload.productId() + " non trovato."));
+        Product product = productService.findById(payload.productId());
 
-        // cerco la mensola
-        Shelf shelf = null;
-        if (payload.shelfId() != null) {
-            shelf = shelfRepository.findById(payload.shelfId())
-                    .orElseThrow(() -> new NotFoundException("Mensola " + payload.shelfId() + " non trovata."));
+        // recupero la mensola o il pallet
+        Shelf shelf = payload.shelfId() != null ? shelfService.findById(payload.shelfId()) : null;
+        Pallet pallet = payload.palletId() != null ? palletService.findById(payload.palletId()) : null;
+
+        // controllo che almeno uno dei due venga popolato
+        if (shelf == null && pallet == null) {
+            throw new BadRequestException("Devi specificare la mensola o il pallet di destinazione del prodotto!");
         }
 
-        // cerco il pallet
-        Pallet pallet = null;
-        if (payload.palletId() != null) {
-            pallet = palletRepository.findById(payload.palletId())
-                    .orElseThrow(() -> new NotFoundException("Pallet " + payload.palletId() + " non trovato."));
+        if (shelf != null && pallet != null) {
+            throw new BadRequestException("Il movimento può riguardare solo una destinazione alla volta!");
         }
 
         // controllo duplicati
-        Optional<Collocation> existingCollocation = collocationRepository.findByProductIdAndShelfIdAndPalletId(product, shelf, pallet);
+        Optional<Collocation> existingCollocation = collocationRepository
+                .findByProductIdAndShelfIdAndPalletId(product, shelf, pallet);
 
         if (existingCollocation.isPresent()) {
             UUID found = existingCollocation.get().getId_collocation();
             if (existingCollocationId.isEmpty() || !existingCollocationId.get().equals(found)) {
-                throw new BadRequestException("Il prodotto " + product.getId_product() +
-                        " è già collocato nella posizione specificata!");
+                throw new BadRequestException("Il prodotto  è già collocato nella posizione specificata!");
             }
         }
 
@@ -80,21 +73,32 @@ public class CollocationService {
     // CREATE
     public Collocation saveCollocation(CollocationDTO payload) {
         Collocation newCollocation = this.mapToEntity(payload, Optional.empty());
+        Collocation saved = collocationRepository.save(newCollocation);
 
-        Collocation savedCollocation = collocationRepository.save(newCollocation);
         log.info("Collocazione creata con successo per Prodotto ID {} in Mensola ID {} o Pallet ID {}!",
-                savedCollocation.getProductId().getId_product(), savedCollocation.getShelfId().getId_shelf(), savedCollocation.getPalletId().getId_pallet());
-        return savedCollocation;
+                saved.getProductId().getId_product(), saved.getShelfId().getId_shelf(), saved.getPalletId().getId_pallet());
+        return saved;
     }
 
     // READ
-    public Page<Collocation> findAll(Pageable pageable) {
-        return collocationRepository.findAll(pageable);
+    public Page<Collocation> findAll(Specification<Collocation> spec, Pageable pageable) {
+        return collocationRepository.findAll(spec, pageable);
     }
 
     public Collocation findById(UUID collocationId) {
-        return collocationRepository.findById(collocationId)
-                .orElseThrow(() -> new NotFoundException("Collocazione " + collocationId + " non trovata!"));
+        return collocationRepository.findById(collocationId).orElseThrow(() -> new NotFoundException(collocationId));
+    }
+
+    public Page<Collocation> findByProductId(Product productId, Pageable pageable) {
+        return collocationRepository.findByProductId(productId, pageable);
+    }
+
+    public Page<Collocation> findByShelfId(Shelf shelf, Pageable pageable) {
+        return collocationRepository.findByShelfId(shelf, pageable);
+    }
+
+    public Page<Collocation> findByPalletId(Pallet pallet, Pageable pageable) {
+        return collocationRepository.findByPalletId(pallet, pageable);
     }
 
     // UPDATE
@@ -102,8 +106,10 @@ public class CollocationService {
         // mapToEntity gestisce la ricerca dei componenti e il controllo duplicati
         Collocation found = this.mapToEntity(payload, Optional.of(collocationId));
 
-        // salvo modifica
+        // salvo la modificaù
+        found.setId_collocation(collocationId);
         found = collocationRepository.save(found);
+
         log.info("Collocazione aggiornata con successo!");
         return found;
     }

@@ -1,12 +1,10 @@
 package com.mechanista.wms.Backend.services;
 
-import com.mechanista.wms.Backend.entities.Role;
 import com.mechanista.wms.Backend.entities.User;
 import com.mechanista.wms.Backend.entities.enums.UserRole;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.exceptions.NotFoundException;
 import com.mechanista.wms.Backend.payloads.UserDTO;
-import com.mechanista.wms.Backend.repositories.RoleRepository;
 import com.mechanista.wms.Backend.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,51 +26,36 @@ public class UserService {
     @Lazy
     private PasswordEncoder bcrypt;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
     // CREATE
     public User saveUser(UserDTO payload) {
         // controllo se esiste già un utente con questo username
-        this.userRepository.findByUsername(payload.username()).ifPresent(user -> {
+        userRepository.findByUsername(payload.username()).ifPresent(user -> {
             throw new BadRequestException("L'username " + user.getUsername() + " è già in uso!");
         });
 
         // controllo se esiste già un utente con questa email
-        this.userRepository.findByEmail(payload.email()).ifPresent(user -> {
+        userRepository.findByEmail(payload.email()).ifPresent(user -> {
             throw new BadRequestException("L'email " + user.getEmail() + " è già registrata!");
         });
 
         // creo il nuovo utente con i dati inseriti
-        User newUser = new User(payload.username(), payload.email(), bcrypt.encode(payload.password()), payload.creation_date());
+        User newUser = new User(
+                payload.username(),
+                payload.email(),
+                bcrypt.encode(payload.password()),
+                payload.role() != null ? payload.role() : UserRole.MECHANICAL, // default WORKER
+                payload.creation_date() != null ? payload.creation_date() : LocalDate.now()
+        );
 
-        // cerco i ruoli disponibili
-        List<Role> assignedRole = List.of();
-        if (payload.role() != null && !payload.role().isEmpty()) {
-            assignedRole = payload.role().stream()
-                    .map(role -> roleRepository.findByUserRole(role)
-                            .orElseThrow(() -> new RuntimeException("Ruolo " + role + " non trovato nel database!")))
-                    .toList();
-        }
 
-        // se non ne ha, assegno un ruolo all'utente creato
-        if (assignedRole.isEmpty()) {
-            Role userRole = roleRepository.findByUserRole(UserRole.MECHANICAL)
-                    .orElseGet(() -> roleRepository.save(new Role(UserRole.MECHANICAL)));
-            assignedRole = List.of(userRole);
-        }
-
-        // salvo il ruolo assegnato e l'utente
-        newUser.setRoles(assignedRole);
-        User savedUUser = this.userRepository.save(newUser);
-
-        log.info("L'utente " + savedUUser.getUsername() + " è stato salvato correttamente con il ruolo: " + assignedRole);
-        return savedUUser;
+        User saved = this.userRepository.save(newUser);
+        log.info("L'utente " + saved.getUsername() + " è stato salvato correttamente con il ruolo: " + saved.getRole());
+        return saved;
     }
 
     // READ
     public User findById(UUID userId) {
-        return userRepository.findByIdWithRoles(userId).orElseThrow(() -> new NotFoundException(userId));
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(userId));
     }
 
     public User findByEmail(String email) {
@@ -79,10 +63,21 @@ public class UserService {
                 new NotFoundException("L'utente con l'email " + email + " non è stato trovato"));
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Utente con username " + username + " non trovato."));
+    }
+
+    public User findByRole(UserRole role) {
+        return userRepository.findByRole(role)
+                .orElseThrow(() -> new NotFoundException("Utente " + role + " non trovato!"));
+    }
+
     // UPDATE
     public User findByIdAndUpdate(UUID userId, UserDTO payload) {
         User found = this.findById(userId);
 
+        // controllo email duplicata solo se cambiata
         if (!found.getEmail().equals(payload.email())) {
             this.userRepository.findByEmail(payload.email())
                     .ifPresent(user -> {
@@ -97,9 +92,13 @@ public class UserService {
             found.setPassword(bcrypt.encode(payload.password()));
         }
 
-        User modifiedUser = this.userRepository.save(found);
-        log.info("L'utente " + modifiedUser.getUsername() + " è stato aggiornato!");
-        return modifiedUser;
+        if (payload.role() != null) {
+            found.setRole(payload.role());
+        }
+
+        User modified = this.userRepository.save(found);
+        log.info("L'utente " + modified.getUsername() + " è stato aggiornato correttamente!");
+        return modified;
     }
 
     // DELETE

@@ -17,6 +17,7 @@ public class Product {
     @GeneratedValue
     private UUID id_product;
 
+    @Column(unique = true)
     private String productCode;
     private String description;
 

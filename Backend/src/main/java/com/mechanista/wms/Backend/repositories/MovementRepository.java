@@ -8,15 +8,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface MovementRepository extends JpaRepository<Movement, UUID> {
     Page<Movement> findAll(Specification<Movement> spec, Pageable pageable);
+    Page<Movement> findByUserId(User userId, Pageable pageable);
+    Page<Movement> findByProductId(Product productId, Pageable pageable);
+    Page<Movement> findByMovementType(MovementType type, Pageable pageable);
+    Page<Movement> findByDate(LocalDate date, Pageable pageable);
 
-    Optional<Movement> findByUserId(User userId);
-    Optional<Movement> findByDate(LocalDate date);
-    Optional<Movement> findByProductId(Product productId);
-    Optional<Movement> findByMovementType(MovementType movementType);
+    Optional<Movement> findByUserIdAndProductIdAndShelfIdAndPalletId(User userId, Product productId, Shelf shelfId, Pallet palletId);
 }
