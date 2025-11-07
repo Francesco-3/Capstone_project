@@ -28,11 +28,6 @@ public class UserService {
 
     // CREATE
     public User saveUser(UserDTO payload) {
-        // controllo se esiste già un utente con questo username
-        userRepository.findByUsername(payload.username()).ifPresent(user -> {
-            throw new BadRequestException("L'username " + user.getUsername() + " è già in uso!");
-        });
-
         // controllo se esiste già un utente con questa email
         userRepository.findByEmail(payload.email()).ifPresent(user -> {
             throw new BadRequestException("L'email " + user.getEmail() + " è già registrata!");
