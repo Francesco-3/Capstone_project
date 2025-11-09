@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -81,8 +80,8 @@ public class CollocationService {
     }
 
     // READ
-    public Page<Collocation> findAll(Specification<Collocation> spec, Pageable pageable) {
-        return collocationRepository.findAll(spec, pageable);
+    public Page<Collocation> findAll(Pageable pageable) {
+        return collocationRepository.findAll(pageable);
     }
 
     public Collocation findById(UUID collocationId) {
@@ -93,8 +92,8 @@ public class CollocationService {
         return collocationRepository.findByProductId(productId, pageable);
     }
 
-    public Page<Collocation> findByShelfId(Shelf shelf, Pageable pageable) {
-        return collocationRepository.findByShelfId(shelf, pageable);
+    public Page<Collocation> findByShelfId(Shelf shelfId, Pageable pageable) {
+        return collocationRepository.findByShelfId(shelfId, pageable);
     }
 
     public Page<Collocation> findByPalletId(Pallet pallet, Pageable pageable) {
@@ -102,7 +101,7 @@ public class CollocationService {
     }
 
     // UPDATE
-    public Collocation updateCollocation(UUID collocationId, CollocationDTO payload) {
+    public Collocation findByIdAndUpdate(UUID collocationId, CollocationDTO payload) {
         // mapToEntity gestisce la ricerca dei componenti e il controllo duplicati
         Collocation found = this.mapToEntity(payload, Optional.of(collocationId));
 
@@ -115,7 +114,7 @@ public class CollocationService {
     }
 
     // DELETE
-    public void delete(UUID collocationId) {
+    public void findByIdAndDelete(UUID collocationId) {
         Collocation found = this.findById(collocationId);
 
         // elimino

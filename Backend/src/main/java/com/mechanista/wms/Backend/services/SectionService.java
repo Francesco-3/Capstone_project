@@ -61,7 +61,7 @@ public class SectionService {
     }
 
     // UPDATE
-    public Section updateSection(UUID sectionId, SectionDTO payload) {
+    public Section findByIdAndUpdate(UUID sectionId, SectionDTO payload) {
         Section found = this.findById(sectionId);
 
         // controllo che non ci siano duplicati

@@ -88,8 +88,8 @@ public class MovementService {
     }
 
     // READ
-    public Page<Movement> findAll(Specification<Movement> spec, Pageable pageable) {
-        return movementRepository.findAll(spec, pageable);
+    public Page<Movement> findAll(Pageable pageable) {
+        return movementRepository.findAll(pageable);
     }
 
     public Movement findById(UUID movementId) {

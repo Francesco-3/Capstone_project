@@ -65,7 +65,7 @@ public class RackService {
     }
 
     // UPDATE
-    public Rack updateRack(UUID rackId, RackDTO payload) {
+    public Rack findByIdAndUpdate(UUID rackId, RackDTO payload) {
         Rack found = this.findById(rackId);
 
         // cerco la nuova sezione
@@ -89,7 +89,7 @@ public class RackService {
     }
 
     // DELETE
-    public void delete(UUID rackId) {
+    public void findByIdAndDelete(UUID rackId) {
         Rack rack = this.findById(rackId);
 
         // controllo che il rack non sia assegnato

@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface MovementRepository extends JpaRepository<Movement, UUID> {
-    Page<Movement> findAll(Specification<Movement> spec, Pageable pageable);
     Page<Movement> findByUserId(User userId, Pageable pageable);
     Page<Movement> findByProductId(Product productId, Pageable pageable);
     Page<Movement> findByMovementType(MovementType type, Pageable pageable);

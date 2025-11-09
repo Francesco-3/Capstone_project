@@ -66,7 +66,7 @@ public class PalletService {
     }
 
     // UPDATE
-    public Pallet updatePallet(UUID palletId, PalletDTO payload) {
+    public Pallet findByIdAndUpdate(UUID palletId, PalletDTO payload) {
         Pallet found = this.findById(palletId);
 
         // cerco la sezione
@@ -91,7 +91,7 @@ public class PalletService {
     }
 
     // DELETE
-    public void delete(UUID palletId) {
+    public void findByIdAndDelete(UUID palletId) {
         Pallet found = this.findById(palletId);
 
         // controllo se il pallet è presente in qualche collocazione

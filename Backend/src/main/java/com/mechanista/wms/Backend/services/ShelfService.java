@@ -62,7 +62,7 @@ public class ShelfService {
     }
 
     // UPDATE
-    public Shelf updateShelf(UUID shelfId, ShelfDTO payload) {
+    public Shelf findByIdAndUpdate(UUID shelfId, ShelfDTO payload) {
         Shelf found = this.findById(shelfId);
 
         // cerco il rack
@@ -81,7 +81,7 @@ public class ShelfService {
     }
 
     // DELETE
-    public void delete(UUID shelfId) {
+    public void findByIdAndDelete(UUID shelfId) {
         Shelf found = this.findById(shelfId);
 
         // controllo se lo shelf è presente in qualche collocation

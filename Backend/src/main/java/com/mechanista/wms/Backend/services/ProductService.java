@@ -41,8 +41,8 @@ public class ProductService {
     }
 
     // READ
-    public Page<Product> findAll(Specification<Product> spec, Pageable pageable) {
-        return productRepository.findAll(spec, pageable);
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public Product findById(UUID productId) {
@@ -71,7 +71,7 @@ public class ProductService {
     }
 
     // UPDATE
-    public Product updateProduct(UUID productId, ProductDTO payload) {
+    public Product findByIdAndUpdate(UUID productId, ProductDTO payload) {
         Product found = this.findById(productId);
 
         if (!found.getProductCode().equals(payload.productCode())) {
