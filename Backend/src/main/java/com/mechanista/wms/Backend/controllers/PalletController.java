@@ -47,21 +47,22 @@ public class PalletController {
         return palletService.findAll(pageable);
     }
 
-    // GET http://localhost:3001/pallets/pallet={palletId}
-    @GetMapping("/{palletId}")
+    // GET http://localhost:3001/pallets/by-id?pallet={palletId}
+    @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    public Pallet getPalletById(@PathVariable UUID palletId) { return palletService.findById(palletId); }
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Pallet getPalletById(@RequestParam("pallet") UUID palletId) { return palletService.findById(palletId); }
 
-    // GET http://localhost:3001/pallets/pallet=code={palletCode}
-    @GetMapping("/pallet?code={palletCode}")
+    // GET http://localhost:3001/pallets/by-code?palletCode={palletCode}
+    @GetMapping("/by-code")
     @ResponseStatus(HttpStatus.OK)
-    public Pallet getPalletByCode(@PathVariable String palletCode) { return palletService.findByPalletCode(palletCode); }
+    public Pallet getPalletByCode(@RequestParam("palletCode") String palletCode) { return palletService.findByPalletCode(palletCode); }
 
     // PUT http://localhost:3001/pallets/update?pallet={palletId}
-    @PutMapping("/update?pallet={palletId}")
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public Pallet updatePallet(@PathVariable UUID palletId, @Valid @RequestBody PalletDTO payload, BindingResult validationResult) {
+    public Pallet updatePallet(@RequestParam("pallet") UUID palletId, @Valid @RequestBody PalletDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -72,8 +73,8 @@ public class PalletController {
     }
 
     // DELETE http://localhost:3001/pallets/delete?pallet={palletId}
-    @DeleteMapping("/delete?pallet={palletId}")
+    @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public void deletePallet(@PathVariable @NotNull UUID palletId) { palletService.findByIdAndDelete(palletId); }
+    public void deletePallet(@RequestParam("pallet") @NotNull UUID palletId) { palletService.findByIdAndDelete(palletId); }
 }

@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RackRepository extends JpaRepository<Rack, UUID> {
-    Optional<Rack> findByShelfCode(String shelfCode);
+    Optional<Rack> findByRackCode(String rackCode);
     Optional<Rack> findBySectionId(Section sectionId);
 }

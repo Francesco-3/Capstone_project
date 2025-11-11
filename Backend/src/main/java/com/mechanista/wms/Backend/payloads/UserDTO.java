@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public record UserDTO(
         @NotBlank(message = "Il campo username non può essere vuoto")
-        @Size(min = 2, max = 10, message = "L'username deve avere tra 2 e 10 caratteri.")
+        @Size(min = 2, message = "L'username deve avere tra 2 e 10 caratteri.")
         String username,
 
         @NotBlank(message = "La password è obbligatoria!")

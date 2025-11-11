@@ -17,14 +17,14 @@ public class Rack {
     private UUID id_rack;
 
     @Column(unique = true)
-    private String shelfCode;
+    private String rackCode;
 
     @ManyToOne
     @JoinColumn(name = "id_section", nullable = false)
     private Section sectionId;
 
-    public Rack(String shelfCode, Section sectionId) {
-        this.shelfCode = shelfCode;
+    public Rack(String rackCode, Section sectionId) {
+        this.rackCode = rackCode;
         this.sectionId = sectionId;
     }
 }

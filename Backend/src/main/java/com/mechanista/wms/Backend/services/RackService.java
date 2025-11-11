@@ -30,8 +30,8 @@ public class RackService {
 
     // CREATE
     public Rack saveRack(RackDTO payload) {
-        if (rackRepository.findByShelfCode(payload.shelfCode()).isPresent()) {
-            throw new BadRequestException("Rack con codice " + payload.shelfCode() + " esiste già!");
+        if (rackRepository.findByRackCode(payload.rackCode()).isPresent()) {
+            throw new BadRequestException("Rack con codice " + payload.rackCode() + " esiste già!");
         };
 
         // cerco la sezione di appartenenza
@@ -40,12 +40,12 @@ public class RackService {
 
         // popolo il rack
         Rack rack = new Rack();
-        rack.setShelfCode(payload.shelfCode());
+        rack.setRackCode(payload.rackCode());
         rack.setSectionId(section);
 
         // salvo
         Rack savedRack = rackRepository.save(rack);
-        log.info("Rack " + savedRack.getShelfCode() + " creata correttamente!");
+        log.info("Rack " + savedRack.getRackCode() + " creata correttamente!");
         return savedRack;
     }
 
@@ -59,9 +59,9 @@ public class RackService {
                 .orElseThrow(() -> new NotFoundException("Rack con l'id " + rackId + " non trovato!"));
     }
 
-    public Rack findByShelfCode(String shelfCode) {
-        return rackRepository.findByShelfCode(shelfCode)
-                .orElseThrow(() -> new NotFoundException("Rack " + shelfCode + " non trovato!"));
+    public Rack findByRackCode(String rackCode) {
+        return rackRepository.findByRackCode(rackCode)
+                .orElseThrow(() -> new NotFoundException("Rack " + rackCode + " non trovato!"));
     }
 
     // UPDATE
@@ -73,13 +73,13 @@ public class RackService {
                 .orElseThrow(() -> new NotFoundException("Sezione " + payload.sectionId() + " non trovata."));
 
         // Controllo duplicati
-        if (!found.getShelfCode().equals(payload.shelfCode()) &&
-                rackRepository.findByShelfCode(payload.shelfCode()).isPresent()) {
-            throw new BadRequestException("Il codice " + payload.shelfCode() + " è già utilizzato!");
+        if (!found.getRackCode().equals(payload.rackCode()) &&
+                rackRepository.findByRackCode(payload.rackCode()).isPresent()) {
+            throw new BadRequestException("Il codice " + payload.rackCode() + " è già utilizzato!");
         }
 
         // modifico i dati
-        found.setShelfCode(payload.shelfCode());
+        found.setRackCode(payload.rackCode());
         found.setSectionId(section);
 
         // salvo
@@ -94,7 +94,7 @@ public class RackService {
 
         // controllo che il rack non sia assegnato
         if (shelfRepository.findByRackId(rack).isPresent()) {
-            throw new BadRequestException("Impossibile eliminare il rack '" + rack.getShelfCode() +
+            throw new BadRequestException("Impossibile eliminare il rack '" + rack.getRackCode() +
                     "' perché contiene una o più mensole.");
         }
 

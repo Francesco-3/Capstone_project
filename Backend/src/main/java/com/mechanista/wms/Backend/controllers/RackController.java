@@ -48,21 +48,22 @@ public class RackController {
         return rackService.findAll(pageable);
     }
 
-    // GET http://localhost:3001/racks/rack={rackId}
-    @GetMapping("/{rackId}")
-    @ResponseStatus(HttpStatus.OK)
-    public Rack getRackById(@PathVariable UUID rackId) { return rackService.findById(rackId); }
-
-    // GET http://localhost:3001/racks/shelf?code={rackCode}
-    @GetMapping("/shelf?code={rackCode}")
-    @ResponseStatus(HttpStatus.OK)
-    public Rack getShelfByCode(@PathVariable String shelfCode) { return rackService.findByShelfCode(shelfCode); }
-
-    // PUT http://localhost:3001/racks/update?rack={rackId}
-    @PutMapping("/{rackId}")
+    // GET http://localhost:3001/racks/by-id?rack={rackId}
+    @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public Rack updateRackById(@PathVariable UUID rackId, @Valid @RequestBody RackDTO payload, BindingResult validationResult) {
+    public Rack getRackById(@RequestParam("rack") UUID rackId) { return rackService.findById(rackId); }
+
+    // GET http://localhost:3001/racks/by-code?rackCode={rackCode}
+    @GetMapping("/by-code")
+    @ResponseStatus(HttpStatus.OK)
+    public Rack getShelfByCode(@RequestParam("rackCode") String rackCode) { return rackService.findByRackCode(rackCode); }
+
+    // PUT http://localhost:3001/racks/update?rack={rackId}
+    @PutMapping("/update")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Rack updateRackById(@RequestParam("rack") UUID rackId, @Valid @RequestBody RackDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -74,8 +75,8 @@ public class RackController {
     }
 
     // DELETE http://localhost:3001/racks/delete?rack={rackId}
-    @DeleteMapping("/delete?rack={rackId}")
+    @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public void deleteRack(@PathVariable @NotNull UUID rackId) { rackService.findByIdAndDelete(rackId); }
+    public void deleteRack(@RequestParam("rack") @NotNull UUID rackId) { rackService.findByIdAndDelete(rackId); }
 }

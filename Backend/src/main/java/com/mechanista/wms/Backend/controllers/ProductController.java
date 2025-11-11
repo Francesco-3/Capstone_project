@@ -51,18 +51,18 @@ public class ProductController {
         return productService.findAll(pageable);
     }
 
-    // GET http://localhost:3001/products/{productId}
+    // GET http://localhost:3001/products/by-id?product={productId}
     @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public Product getProductById(@RequestParam("id") UUID productId) { return productService.findById(productId); }
+    public Product getProductById(@RequestParam("product") UUID productId) { return productService.findById(productId); }
 
-    // GET http://localhost:3001/products/{productName}
+    // GET http://localhost:3001/products/by-name?productName={name}
     @GetMapping("/by-name")
     @ResponseStatus(HttpStatus.OK)
-    public Product getProductByName(@RequestParam("name") String productName) { return productService.findByProductName(productName); }
+    public Product getProductByName(@RequestParam("productName") String productName) { return productService.findByProductName(productName); }
 
-    // GET http://localhost:3001/products/{insertionDate}
+    // GET http://localhost:3001/products/by-date?insertion={date}
     @GetMapping("/by-date")
     @ResponseStatus(HttpStatus.OK)
     public List<Product> getListByDate(@RequestParam("insertion") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate insertionDate) {
@@ -75,10 +75,10 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public List<Product> getProductByPrice(@RequestParam("price") double price) { return productService.findByPrice(price); }
 
-    // GET http://localhost:3001/products/by-code?code={productCode}
+    // GET http://localhost:3001/products/by-code?productCode={code}
     @GetMapping("/by-code")
     @ResponseStatus(HttpStatus.OK)
-    public Product getProductByCode(@RequestParam("code") String productCode) { return productService.findByProductCode(productCode); }
+    public Product getProductByCode(@RequestParam("productCode") String productCode) { return productService.findByProductCode(productCode); }
 
     // PUT http://localhost:3001/products/update?product={productId}
     @PutMapping("/update")

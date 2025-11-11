@@ -29,7 +29,7 @@ public class CollocationController {
     @Autowired
     private CollocationService collocationService;
 
-    // http://localhost:3001/collocations
+    // POST http://localhost:3001/collocations
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
@@ -44,44 +44,45 @@ public class CollocationController {
         return collocationService.saveCollocation(payload);
     }
 
-    // http://localhost:3001/collocations
+    // GET http://localhost:3001/collocations
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<Collocation> getAllCollocation(@PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return collocationService.findAll(pageable);
     } // pulire il json
 
-    // http://localhost:3001/collocations/collocation={collocationId}
-    @GetMapping("/collocation={collocationId}")
+    // GET http://localhost:3001/collocations/by-id?collocation={collocationId}
+    @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    public Collocation getCollocationById(@PathVariable UUID collocationId) { return collocationService.findById(collocationId); }
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Collocation getCollocationById(@RequestParam("collocation") UUID collocationId) { return collocationService.findById(collocationId); }
 
-    // http://localhost:3001/collocations/collocation?product={productId}
-    @GetMapping("/collocation?product={productId}")
+    // GET http://localhost:3001/collocations/by-product?product={productId}
+    @GetMapping("/by-product")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Collocation> getProductById(@PathVariable Product productId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
+    public Page<Collocation> getProductById(@RequestParam("product") Product productId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return collocationService.findByProductId(productId, pageable);
     }
 
-    // http://localhost:3001/collocations/collocation?pallet={palletId}
-    @GetMapping("/collocation?pallet={palletId}")
+    // GET http://localhost:3001/collocations/by-pallet?pallet={palletId}
+    @GetMapping("/by-pallet")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Collocation> getPalletById(@PathVariable Pallet palletId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
+    public Page<Collocation> getPalletById(@RequestParam("pallet") Pallet palletId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return collocationService.findByPalletId(palletId, pageable);
     }
 
-    // http://localhost:3001/collocations/collocation?shelf={shelfId}
-    @GetMapping("/collocation?shelf={shelfId}")
+    // GET http://localhost:3001/collocations/by-shelf?shelf={shelfId}
+    @GetMapping("/by-shelf")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Collocation> getShelfById(@PathVariable Shelf shelfId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
+    public Page<Collocation> getShelfById(@RequestParam("shelf") Shelf shelfId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return collocationService.findByShelfId(shelfId, pageable);
     }
 
-    // http://localhost:3001/collocations/update?collocation={collocationId}
-    @PutMapping("/update?collocation={collocationId}")
+    // PUT http://localhost:3001/collocations/update?collocation={collocationId}
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public Collocation updateCollocation(@PathVariable UUID collocationId, @RequestBody @Valid CollocationDTO payload, BindingResult validationResult) {
+    public Collocation updateCollocation(@RequestParam("collocation") UUID collocationId, @RequestBody @Valid CollocationDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -92,9 +93,9 @@ public class CollocationController {
         return collocationService.findByIdAndUpdate(collocationId, payload);
     }
 
-    // http://localhost:3001/collocations/delete?collocation={collocationId}
-    @DeleteMapping("/delete?collocation={collocationId}")
+    // DELETE http://localhost:3001/collocations/delete?collocation={collocationId}
+    @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public void deleteCollocation(@PathVariable @NotNull UUID collocationId) { collocationService.findByIdAndDelete(collocationId); }
+    public void deleteCollocation(@RequestParam("collocation") @NotNull UUID collocationId) { collocationService.findByIdAndDelete(collocationId); }
 }

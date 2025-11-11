@@ -74,8 +74,7 @@ public class CollocationService {
         Collocation newCollocation = this.mapToEntity(payload, Optional.empty());
         Collocation saved = collocationRepository.save(newCollocation);
 
-        log.info("Collocazione creata con successo per Prodotto ID {} in Mensola ID {} o Pallet ID {}!",
-                saved.getProductId().getId_product(), saved.getShelfId().getId_shelf(), saved.getPalletId().getId_pallet());
+        log.info("Collocazione creata con successo per Prodotto ID {}!", saved.getProductId().getId_product());
         return saved;
     }
 

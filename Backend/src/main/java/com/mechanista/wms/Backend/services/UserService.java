@@ -1,5 +1,6 @@
 package com.mechanista.wms.Backend.services;
 
+import com.mechanista.wms.Backend.entities.Collocation;
 import com.mechanista.wms.Backend.entities.User;
 import com.mechanista.wms.Backend.entities.enums.UserRole;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
@@ -9,6 +10,8 @@ import com.mechanista.wms.Backend.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +65,8 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Utente con username " + username + " non trovato."));
     }
 
-    public User findByRole(UserRole role) {
-        return userRepository.findByRole(role)
-                .orElseThrow(() -> new NotFoundException("Utente " + role + " non trovato!"));
+    public Page<User> findByRole(UserRole userRole, Pageable pageable) {
+        return userRepository.findByRole(userRole, pageable);
     }
 
     // UPDATE

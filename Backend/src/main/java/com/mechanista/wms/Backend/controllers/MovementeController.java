@@ -45,41 +45,46 @@ public class MovementeController {
     // GET http://localhost:3001/movements
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Page<Movement> getAllMovement(@PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable) {
         return movementService.findAll(pageable);
     } // pulire il json
 
-    // GET http://localhost:3001/movements/movement={movementId}
-    @GetMapping("/movement={movementId}")
+    // GET http://localhost:3001/movements/by-id?movement={movementId}
+    @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    public Movement getMovementById(@PathVariable UUID movementId) { return movementService.findById(movementId); }
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Movement getMovementById(@RequestParam("movement") UUID movementId) { return movementService.findById(movementId); }
 
-    // GET http://localhost:3001/movements/movement?product={productId}
-    @GetMapping("/movement?product={productId}")
+    // GET http://localhost:3001/movements/by-product?product={productId}
+    @GetMapping("/by-product")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Movement> getProductById(@PathVariable Product productId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Page<Movement> getProductById(@RequestParam("product") Product productId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByProductId(productId, pageable);
     }
 
-    // GET http://localhost:3001/movements/movement?date={date}
-    @GetMapping("/movement?date={date}")
+    // GET http://localhost:3001/movements/by-date?movementDate={date}
+    @GetMapping("/by-date")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Movement> getPalletById(@PathVariable LocalDate date, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Page<Movement> getPalletById(@RequestParam("movementDate") LocalDate date, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByDate(date, pageable);
     }
 
-    // http://localhost:3001/movements/movement?user={userId}
-    @GetMapping("/movement?user={userId}")
+    // GET http://localhost:3001/movements/by-user?user={userId}
+    @GetMapping("/by-user")
     @ResponseStatus(HttpStatus.OK)
-    public Page<Movement> getByUserId(@PathVariable UUID userId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Page<Movement> getByUserId(@RequestParam("user") UUID userId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByUserId(userId, pageable);
     }
 
-    // http://localhost:3001/movements/update?movement={movementId}
-    @PutMapping("/update?movement={movementId}")
+    // PUT http://localhost:3001/movements/update?movement={movementId}
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasAuthority('ROLE_MECHANICAL')")
-    public Movement updateMovement(@PathVariable UUID movementId, @RequestBody @Valid MovementDTO payload, BindingResult validationResult) {
+    public Movement updateMovement(@RequestParam("movement") UUID movementId, @RequestBody @Valid MovementDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -90,9 +95,9 @@ public class MovementeController {
         return movementService.findByIdAndUpdate(movementId, payload);
     }
 
-    // http://localhost:3001/movements/delete?movement={movementId}
-    @DeleteMapping("/delete?movement={movementId}")
+    // DELETE http://localhost:3001/movements/delete?movement={movementId}
+    @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_MECHANICAL')")
-    public void deleteMovement(@PathVariable @NotNull UUID movementId) { movementService.findByIdAndDelete(movementId); }
+    public void deleteMovement(@RequestParam("movement") @NotNull UUID movementId) { movementService.findByIdAndDelete(movementId); }
 }

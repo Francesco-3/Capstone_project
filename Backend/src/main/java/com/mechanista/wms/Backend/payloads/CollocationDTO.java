@@ -9,7 +9,7 @@ public record CollocationDTO(
         @NotNull(message = "La quantità di pezzi è obbligatoria!")
         Integer quantity,
 
-        @NotBlank(message = "L'id del prodotto è obbligatorio!")
+        @NotNull(message = "L'id del prodotto è obbligatorio!")
         UUID productId,
 
         UUID shelfId,
