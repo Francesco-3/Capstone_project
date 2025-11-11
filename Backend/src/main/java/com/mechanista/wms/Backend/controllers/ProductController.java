@@ -11,12 +11,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,7 +29,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // POST http:://localhost:3001/products
+    // POST http://localhost:3001/products
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
@@ -41,31 +44,47 @@ public class ProductController {
         return productService.saveProduct(payload);
     }
 
-    // GET http:://localhost:3001/products
+    // GET http://localhost:3001/products
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<Product> getAllProducts(@PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return productService.findAll(pageable);
     }
 
-    // GET http:://localhost:3001/products/product?insertion={insertionDate}
-
-
-    // GET http:://localhost:3001/products/product?price={price}
-    @GetMapping("/product?price={price}")
+    // GET http://localhost:3001/products/{productId}
+    @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    public Product getProductByPrice(@PathVariable double price) { return productService.findByPrice(price); }
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Product getProductById(@RequestParam("id") UUID productId) { return productService.findById(productId); }
 
-    // GET http:://localhost:3001/products/product?code={productCode}
-    @GetMapping("/product?code={productCode}")
+    // GET http://localhost:3001/products/{productName}
+    @GetMapping("/by-name")
     @ResponseStatus(HttpStatus.OK)
-    public Product getProductByCode(@PathVariable String productCode) { return productService.findByProductCode(productCode); }
+    public Product getProductByName(@RequestParam("name") String productName) { return productService.findByProductName(productName); }
 
-    // PUT http:://localhost:3001/products/update={productId}
-    @PutMapping("/update={productId}")
+    // GET http://localhost:3001/products/{insertionDate}
+    @GetMapping("/by-date")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Product> getListByDate(@RequestParam("insertion") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate insertionDate) {
+        return productService.findByInsertionDate(insertionDate);
+    }
+
+    // GET http://localhost:3001/products/by-price?price={price}
+    @GetMapping("/by-price")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public List<Product> getProductByPrice(@RequestParam("price") double price) { return productService.findByPrice(price); }
+
+    // GET http://localhost:3001/products/by-code?code={productCode}
+    @GetMapping("/by-code")
+    @ResponseStatus(HttpStatus.OK)
+    public Product getProductByCode(@RequestParam("code") String productCode) { return productService.findByProductCode(productCode); }
+
+    // PUT http://localhost:3001/products/update?product={productId}
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public Product updateProduct(@PathVariable UUID productId, @RequestBody @Valid ProductDTO payload, BindingResult validationResult) {
+    public Product updateProduct(@RequestParam("product") UUID productId, @RequestBody @Valid ProductDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -76,10 +95,10 @@ public class ProductController {
         return productService.findByIdAndUpdate(productId, payload);
     }
 
-    // DELETE http:://localhost:3001/products/delete={productId}
-    @DeleteMapping("/delete={productId}")
+    // DELETE http://localhost:3001/products/delete?product={productId}
+    @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public void deleteProduct(@PathVariable @NotNull UUID productId) { productService.findByIdAndDelete(productId); }
+    public void deleteProduct(@RequestParam("product") @NotNull UUID productId) { productService.findByIdAndDelete(productId); }
 
 }

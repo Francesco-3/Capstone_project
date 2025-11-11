@@ -105,7 +105,7 @@ public class CollocationService {
         // mapToEntity gestisce la ricerca dei componenti e il controllo duplicati
         Collocation found = this.mapToEntity(payload, Optional.of(collocationId));
 
-        // salvo la modificaù
+        // salvo la modifica
         found.setId_collocation(collocationId);
         found = collocationRepository.save(found);
 

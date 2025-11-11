@@ -4,7 +4,6 @@ import com.mechanista.wms.Backend.entities.enums.UserRole;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 public record UserDTO(
         @NotBlank(message = "Il campo username non può essere vuoto")

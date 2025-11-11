@@ -3,7 +3,6 @@ package com.mechanista.wms.Backend.controllers;
 import com.mechanista.wms.Backend.entities.Pallet;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.payloads.PalletDTO;
-import com.mechanista.wms.Backend.repositories.PalletRepository;
 import com.mechanista.wms.Backend.services.PalletService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +26,7 @@ public class PalletController {
     @Autowired
     private PalletService palletService;
 
-    // POST http://localhost:3001/pallet
+    // POST http://localhost:3001/pallets
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
@@ -41,25 +40,25 @@ public class PalletController {
         return palletService.savePallet(payload);
     }
 
-    // GET http://localhost:3001/pallet
+    // GET http://localhost:3001/pallets
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<Pallet> getAllPallets(@PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable) {
         return palletService.findAll(pageable);
     }
 
-    // GET http://localhost:3001/pallet/{palletId}
+    // GET http://localhost:3001/pallets/pallet={palletId}
     @GetMapping("/{palletId}")
     @ResponseStatus(HttpStatus.OK)
     public Pallet getPalletById(@PathVariable UUID palletId) { return palletService.findById(palletId); }
 
-    // GET http://localhost:3001/pallet/code/{palletCode}
-    @GetMapping("/code/{palletCode}")
+    // GET http://localhost:3001/pallets/pallet=code={palletCode}
+    @GetMapping("/pallet?code={palletCode}")
     @ResponseStatus(HttpStatus.OK)
     public Pallet getPalletByCode(@PathVariable String palletCode) { return palletService.findByPalletCode(palletCode); }
 
-    // PUT http://localhost:3001/pallet/{palletId}
-    @PutMapping("/{palletId}")
+    // PUT http://localhost:3001/pallets/update?pallet={palletId}
+    @PutMapping("/update?pallet={palletId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Pallet updatePallet(@PathVariable UUID palletId, @Valid @RequestBody PalletDTO payload, BindingResult validationResult) {
@@ -72,8 +71,8 @@ public class PalletController {
         return palletService.findByIdAndUpdate(palletId, payload);
     }
 
-    // DELETE http://localhost:3001/pallet/{palletId}
-    @DeleteMapping("/{palletId}")
+    // DELETE http://localhost:3001/pallets/delete?pallet={palletId}
+    @DeleteMapping("/delete?pallet={palletId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public void deletePallet(@PathVariable @NotNull UUID palletId) { palletService.findByIdAndDelete(palletId); }

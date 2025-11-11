@@ -61,6 +61,11 @@ public class ShelfService {
                 .orElseThrow(() -> new NotFoundException("Mensola " + shelfId + " non trovata!"));
     }
 
+    public Shelf findByShelfNumber(int shelfNumber) {
+        return shelfRepository.findByShelfNumber(shelfNumber)
+                .orElseThrow(() -> new NotFoundException("Mensola n. " + shelfNumber + " non trovata!"));
+    }
+
     // UPDATE
     public Shelf findByIdAndUpdate(UUID shelfId, ShelfDTO payload) {
         Shelf found = this.findById(shelfId);

@@ -48,17 +48,17 @@ public class RackController {
         return rackService.findAll(pageable);
     }
 
-    // GET http://localhost:3001/racks/{rackId}
+    // GET http://localhost:3001/racks/rack={rackId}
     @GetMapping("/{rackId}")
     @ResponseStatus(HttpStatus.OK)
     public Rack getRackById(@PathVariable UUID rackId) { return rackService.findById(rackId); }
 
-    // GET http://localhost:3001/racks/shelf/code/{code}
-    @GetMapping("/shelf/code/{rackCode}")
+    // GET http://localhost:3001/racks/shelf?code={rackCode}
+    @GetMapping("/shelf?code={rackCode}")
     @ResponseStatus(HttpStatus.OK)
     public Rack getShelfByCode(@PathVariable String shelfCode) { return rackService.findByShelfCode(shelfCode); }
 
-    // PUT http://localhost:3001/racks/{rackId}
+    // PUT http://localhost:3001/racks/update?rack={rackId}
     @PutMapping("/{rackId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
@@ -73,8 +73,8 @@ public class RackController {
         return rackService.findByIdAndUpdate(rackId, payload);
     }
 
-    // DELETE http://localhost:3001/rack/{rackId}
-    @DeleteMapping("/{rackId}")
+    // DELETE http://localhost:3001/racks/delete?rack={rackId}
+    @DeleteMapping("/delete?rack={rackId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public void deleteRack(@PathVariable @NotNull UUID rackId) { rackService.findByIdAndDelete(rackId); }

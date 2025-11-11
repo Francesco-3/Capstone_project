@@ -1,6 +1,5 @@
 package com.mechanista.wms.Backend.payloads;
 
-import com.mechanista.wms.Backend.entities.Section;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

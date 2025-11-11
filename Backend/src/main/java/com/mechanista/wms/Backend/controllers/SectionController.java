@@ -47,27 +47,28 @@ public class SectionController {
         return sectionService.findAll(pageable);
     }
 
-    // GET http://localhost:3001/sections/{sectionId}
-    @GetMapping("/{sectionId}")
+    // GET http://localhost:3001/sections/by-id?section-id={sectionId}
+    @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    public Section getSectionById(@PathVariable UUID sectionId) { return sectionService.findById(sectionId);}
+    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
+    public Section getSectionById(@RequestParam("section-id") UUID sectionId) { return sectionService.findById(sectionId);}
 
-    // GET http://localhost:3001/sections/code/{code}
-    @GetMapping("/code/{sectionCode}")
+    // GET http://localhost:3001/sections/by-code?section-code={sectionCode}
+    @GetMapping("/by-code")
     @ResponseStatus(HttpStatus.OK)
-    public Section getSectionByCode(@PathVariable String sectionCode) { return sectionService.findBySectionCode(sectionCode);}
+    public Section getSectionByCode(@RequestParam("section-code") String sectionCode) { return sectionService.findBySectionCode(sectionCode);}
 
-    // PUT http://localhost:3001/sections/{sectionId}
-    @PutMapping("/{sectionId}")
+    // PUT http://localhost:3001/sections/update?section-id={sectionId}
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public Section updateSection(@PathVariable UUID sectionId, @Valid @RequestBody SectionDTO payload) {
+    public Section updateSection(@RequestParam("section-id") UUID sectionId, @Valid @RequestBody SectionDTO payload) {
         return sectionService.findByIdAndUpdate(sectionId, payload);
     }
 
-    // DELETE http://localhost:3001/sections/{id}
-    @DeleteMapping("/{sectionId}")
+    // DELETE http://localhost:3001/sections/delete?section-id={sectionId}
+    @DeleteMapping("/delete")
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSection(@PathVariable @NotNull UUID sectionId) { sectionService.findByIdAndDelete(sectionId); }
+    public void deleteSection(@RequestParam("section-id") @NotNull UUID sectionId) { sectionService.findByIdAndDelete(sectionId); }
 }

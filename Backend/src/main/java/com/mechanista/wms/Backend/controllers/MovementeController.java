@@ -2,7 +2,6 @@ package com.mechanista.wms.Backend.controllers;
 
 import com.mechanista.wms.Backend.entities.*;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
-import com.mechanista.wms.Backend.payloads.CollocationDTO;
 import com.mechanista.wms.Backend.payloads.MovementDTO;
 import com.mechanista.wms.Backend.services.MovementService;
 import jakarta.validation.Valid;
@@ -56,7 +55,7 @@ public class MovementeController {
     public Movement getMovementById(@PathVariable UUID movementId) { return movementService.findById(movementId); }
 
     // GET http://localhost:3001/movements/movement?product={productId}
-    @GetMapping("/product?movement={productId}")
+    @GetMapping("/movement?product={productId}")
     @ResponseStatus(HttpStatus.OK)
     public Page<Movement> getProductById(@PathVariable Product productId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByProductId(productId, pageable);
@@ -70,7 +69,7 @@ public class MovementeController {
     }
 
     // http://localhost:3001/movements/movement?user={userId}
-    @GetMapping("/user?movement={userId}")
+    @GetMapping("/movement?user={userId}")
     @ResponseStatus(HttpStatus.OK)
     public Page<Movement> getByUserId(@PathVariable UUID userId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByUserId(userId, pageable);

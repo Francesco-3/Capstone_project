@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,12 +29,13 @@ public class ProductService {
 
         Product newProduct = new Product();
         newProduct.setProductCode(payload.productCode());
+        newProduct.setProductName(payload.productName());
         newProduct.setPrice(payload.price());
         newProduct.setStock(payload.stock());
         newProduct.setMeasurement(payload.measurement());
         newProduct.setWeight(payload.weight());
         newProduct.setDescription(payload.description());
-        newProduct.setInsertionDate(payload.insertion_date());
+        newProduct.setInsertionDate(payload.insertionDate());
 
         return newProduct;
     }
@@ -50,6 +50,11 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Prodotto " + productId + " non trovato!"));
     }
 
+    public Product findByProductName(String productName) {
+        return productRepository.findByProductName(productName)
+                .orElseThrow(() -> new NotFoundException("Prodotto " + productName + " non trovato!"));
+    }
+
     public List<Product> findByInsertionDate(LocalDate insertionDate) {
         List<Product> products = this.productRepository.findByInsertionDate(insertionDate);
 
@@ -60,9 +65,14 @@ public class ProductService {
         return products;
     }
 
-    public Product findByPrice(double price) {
-        return productRepository.findByPrice(price)
-                .orElseThrow(() -> new NotFoundException("Il prezzo " + price + " non è presente nel database"));
+    public List<Product> findByPrice(double price) {
+        List<Product> products = this.productRepository.findByPrice(price);
+
+        if (products.isEmpty()) {
+            throw new NotFoundException("Nessun prodotto trovato con il prezzo inserito: " + price);
+        }
+
+        return products;
     }
 
     public Product findByProductCode(String productCode) {
@@ -82,12 +92,13 @@ public class ProductService {
         }
 
         found.setProductCode(payload.productCode());
+        found.setProductName(payload.productName());
         found.setPrice(payload.price());
         found.setStock(payload.stock());
         found.setMeasurement(payload.measurement());
         found.setWeight(payload.weight());
         found.setDescription(payload.description());
-        found.setInsertionDate(payload.insertion_date());
+        found.setInsertionDate(payload.insertionDate());
 
         Product modifierProduct = this.productRepository.save(found);
         log.info("Il prodotto è stato aggiornato correttamente");

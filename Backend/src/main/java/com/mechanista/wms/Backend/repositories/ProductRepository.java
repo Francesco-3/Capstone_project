@@ -10,7 +10,9 @@ import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findByInsertionDate(LocalDate insertionDate);
+    List<Product> findByPrice(double price);
 
-    Optional<Product> findByPrice(double price);
+    Optional<Product> findById(UUID productId);
+    Optional<Product> findByProductName(String productName);
     Optional<Product> findByProductCode(String productCode);
 }

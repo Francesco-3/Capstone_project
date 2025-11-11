@@ -48,16 +48,21 @@ public class ShelfController {
         return shelfService.findAll(pageable);
     }
 
-    //GET http://localhost:3001/shelfs/{shelfId}
-    @GetMapping("/{shelfId}")
+    //GET http://localhost:3001/shelfs/by-id?id={shelfId}
+    @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    public Shelf getShelfById(@PathVariable UUID shelfId) { return shelfService.findById(shelfId); }
+    public Shelf getShelfById(@RequestParam("shelf-id") UUID shelfId) { return shelfService.findById(shelfId); }
 
-    // PUT http://localhost:3001/shelf/{shelfId}
-    @PutMapping("/{shelfId}")
+    //GET http://localhost:3001/shelfs/by-number?shelf-number={shelfNumber}
+    @GetMapping("/by-number")
+    @ResponseStatus(HttpStatus.OK)
+    public Shelf getShelfByShelfNumber(@RequestParam("shelf-number") int shelfNumber) { return shelfService.findByShelfNumber(shelfNumber); }
+
+    // PUT http://localhost:3001/shelfs/update?shelf={shelfId}
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public Shelf updateShelf(@PathVariable UUID shelfId, @Valid @RequestBody ShelfDTO payload, BindingResult validationResult) {
+    public Shelf updateShelf(@RequestParam("shelf-id") UUID shelfId, @Valid @RequestBody ShelfDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -68,9 +73,9 @@ public class ShelfController {
         return shelfService.findByIdAndUpdate(shelfId, payload);
     }
 
-    // DELETE http://localhost:3001/shelfs/{shelfId}
-    @DeleteMapping("/{shelfId}")
+    // DELETE http://localhost:3001/shelfs/delete?shelf={shelfId}
+    @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
-    public void deleteShelf(@PathVariable @NotNull UUID shelfId) { shelfService.findByIdAndDelete(shelfId); }
+    public void deleteShelf(@RequestParam("shelf-id") @NotNull UUID shelfId) { shelfService.findByIdAndDelete(shelfId); }
 }

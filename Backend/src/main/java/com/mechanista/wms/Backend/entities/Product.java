@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,6 +19,8 @@ public class Product {
 
     @Column(unique = true)
     private String productCode;
+
+    private String productName;
     private String description;
 
     @Column(nullable = false)
@@ -31,8 +33,9 @@ public class Product {
     @Column(nullable = false)
     private LocalDate insertionDate;
 
-    public Product(String productCode, String description, String measurement, double weight, double price, int stock, LocalDate insertionDate) {
+    public Product(String productCode, String productName, String description, String measurement, double weight, double price, int stock, LocalDate insertionDate) {
         this.productCode = productCode;
+        this.productName = productName;
         this.description = description;
         this.measurement = measurement;
         this.weight = weight;

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "movements")
 @Getter
 @Setter
 @ToString

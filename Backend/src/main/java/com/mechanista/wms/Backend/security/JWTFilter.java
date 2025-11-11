@@ -43,8 +43,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
         Claims claims = jwtTools.extractAllClaims(accessToken); // estraggo i claims
         UUID userId = UUID.fromString(claims.getSubject()); // recupero l'id utente
-        User found = userService.findById(userId); // Cerco l'utente nel databas
-        String roleString = claims.get("roles", String.class); // estraggp la lista dei ruoli
+        User found = userService.findById(userId); // Cerco l'utente nel database
+        String roleString = claims.get("roles", String.class); // estraggo la lista dei ruoli
         List<SimpleGrantedAuthority> authorities = null;
 
         // se esistono ruoli, li trasformo in oggetti GrantedAuthority

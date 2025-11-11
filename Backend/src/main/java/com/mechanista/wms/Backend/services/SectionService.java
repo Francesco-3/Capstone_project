@@ -68,7 +68,7 @@ public class SectionService {
         if (!found.getSectionCode().equals(payload.sectionCode())) {
             this.sectionRepository.findBySectionCode(payload.sectionCode())
                     .ifPresent(section -> {
-                        throw new BadRequestException("La sezione " + section.getSectionCode() + "è già in uso!");
+                        throw new BadRequestException("La sezione " + section.getSectionCode() + " è già in uso!");
                     });
         }
 
