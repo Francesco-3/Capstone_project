@@ -40,7 +40,7 @@ public class UserService {
                 payload.username(),
                 payload.email(),
                 bcrypt.encode(payload.password()),
-                payload.role() != null ? payload.role() : UserRole.MECHANICAL, // default WORKER
+                payload.role(), // default WORKER
                 payload.creation_date() != null ? payload.creation_date() : LocalDate.now()
         );
 
