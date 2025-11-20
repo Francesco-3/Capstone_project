@@ -1,6 +1,6 @@
 import { Container, Row, Col } from "react-bootstrap";
 
-import "../NotFoundPage.css";
+import "../components/css/NotFoundPage.css";
 
 const Complete404Page = () => {
   return (
@@ -17,7 +17,7 @@ const Complete404Page = () => {
               </a>{" "}
               per saperne di più.
             </p>
-            <a href="/" className="home-button-link">
+            <a href="/engineer" className="home-button-link">
               <button
                 className="home-button"
               >

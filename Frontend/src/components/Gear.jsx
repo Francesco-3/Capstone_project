@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Questo componente contiene la struttura HTML e gli stili CSS 
 // necessari per visualizzare le ruote dentate animate.
 export default function GearSet({ positionClass }) {
