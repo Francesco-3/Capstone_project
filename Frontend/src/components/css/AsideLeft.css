@@ -1,18 +1,18 @@
 .sidebar {
-    position: sticky;
     min-height: 50rem;
-    height: 100%;
     padding: 1.5rem 1rem;
     background: var(--card-bg);
     border-radius: 0.5rem;
     max-width: 18rem;
+    width: 18rem;
     min-width: 4rem;
-    display: flex;
     color: var(--label-color);
-    flex-direction: column;
-    left: 0;
-    top: 0;
+    box-shadow: var(--box-shadow);
     transition: max-width 0.2s ease-in-out;
+}
+
+.sidebar:hover {
+    box-shadow: none;
 }
 
 body.collapsed .sidebar {
@@ -26,12 +26,12 @@ body.collapsed .sidebar .hide {
 }
 
 .separator {
-    background: var(--separator);
+    background: var(--label-color);
     height: 1px;
 }
 
 .separator-top {
-    margin-top: 40vh;
+    margin-top: 60%;
 }
 
 body.collapsed .search-wrapper input::placeholder {
@@ -66,7 +66,7 @@ body.collapsed .search-wrapper input::placeholder {
 
 .expand-btn {
     position: absolute;
-    display: grid;
+    display: none;
     place-items: center;
     cursor: pointer;
     background: var(--card-bg);
@@ -112,15 +112,6 @@ body.collapsed .expand-btn svg {
     min-width: 1.75rem;
 }
 
-.sidebar-links a:hover {
-    background: var(--steel-skin);
-    color: var(--label-color);
-}
-
-.sidebar-links a:hover svg {
-    stroke: var(--label-color);
-}
-
 .sidebar-links a {
     color: var(--label-color);
     width: 100%;
@@ -136,6 +127,15 @@ body.collapsed .expand-btn svg {
     transition: background  2s ease-in-out;
 }
 
+.sidebar-links a:hover {
+    background: var(--steel-skin);
+    color: var(--label-color);
+}
+
+.sidebar-links a:hover svg {
+    stroke: var(--label-color);
+}
+
 .sidebar-links a .link {
     overflow: hidden;
     white-space: nowrap;
@@ -144,6 +144,7 @@ body.collapsed .expand-btn svg {
 
 .sidebar-links .active {
     text-decoration: none;
+    color: var(--label-color);
     background: var(--steel-skin);
 }
 
@@ -152,22 +153,15 @@ body.collapsed .expand-btn svg {
 }
 
 /* Profile configuration */
-.sidebar_profile {
-    overflow-x: hidden;
-    height: fit-content;
-}
-
 .avatar {
     width: 3rem;
     height: 3rem;
     object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid transparent;
     transition: all 0.2s ease-in-out;
 }
 
 .avatar:hover {
-    border: 2px solid var(--tooltip-bg);
+    border: 2px solid var(--steel-skin);
 }
 
 .avatar_name {
@@ -195,7 +189,7 @@ body.collapsed .expand-btn svg {
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 10;
+  z-index: 100;
   font-size: 0.85rem;
 }
 
@@ -215,4 +209,12 @@ body.collapsed .expand-btn svg {
   opacity: 1;
   visibility: visible;
   transform: translateY(-50%) translateX(0);
+}
+
+/* Responsività: riduci la larghezza su schermi più piccoli */
+@media (max-width: 991.9px) {
+  .company-name,
+  .link {
+    display: none;
+  }
 }

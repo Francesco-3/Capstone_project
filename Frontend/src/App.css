@@ -4,8 +4,8 @@
   --steel-skin: #4B6D80;
   --input-color: #9c9c9c60;
   --label-color: #8d8d8d;
-  --color-light: rgba(255, 255, 255, 0.4);
-  --box-shadow: var(--color-light);
+  --color-light: rgba(255, 255, 255, 0.521);
+  --box-shadow: 0 0.5rem 1.5rem var(--color-light);
 
   --border: 0.2px solid var(--steel-skin);
 
@@ -17,51 +17,21 @@
   --warning: #FFC107;
   --danger: #F44336;
   --clr-alpha: #9c9c9c60;
-  --sidebar-bg: #ffffff;
-    
-  --text-gray: #898f96;
-  --text: #000000;
-  --text-headline: #111111;
-  --text-link: #f9fafc;
-  --expand-button: #f9fafc;
-  --logout: #FA7575;
-  --tooltip-bg: var(--primary);
-  --search-bg: #fff;
-  --search-border: #f0f0f0;
-  --search-text: #8d9195;
-  --search-icon: #a4a6ab;
-  --separator: #f1f1f1;
-  --link-hover: #f4f5f7;
-
   --color-primary: #7380ec;
   --color-danger: #ff7782;
   --color-success: #41f1b6;
   --color-warning: #ffbb55;
-  --color-white: #fff;
-  --color-info-dark: #7d8da1;
-  --color-info-light: #dce1eb;
-  --color-dark: #363949;
-  --color-primary-variant: #111e88;
-  --color-dark-variant: #677483;
-  --color-background: #f6f6f9;
+
+  --card-border-radius: 2rem;
+  --card-padding: 1rem;
+
+  --row-dispair: #FAFAFA;
+  --row-pair: #EEEEEE;
 }
 
-.dark-theme-variables {
-  --bg: #181a1e;
-  --steel-skin: #607D8B;
-  --primary-text: #DEDEDE;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
+body{
   background-color: var(--bg);
 }
-
 .form .btn {
   padding: 10px 20px;
   font-size: 1rem;

@@ -1,21 +1,18 @@
 import "bootstrap/dist/css/bootstrap.min.css"
-import "../../App.css"
 import AsideLeft from "../../components/AsideLeft"
-import { Container, Row, Col, Card } from "react-bootstrap"
+import "../../App.css";
+import { Container, Row, Col } from "react-bootstrap"
 import { Outlet } from "react-router-dom"
 
 export default function EngineerPage() {
   return (
-    <Container fluid className="d-flex">
-      <Row className="flex-grow-1 mx-0 p-3 vh-100">
-        {/* 1. Colonna per la Sidebar (AsideLeft) */}
-        {/* md={3} o md={2} definisce la larghezza della sidebar sulla griglia Bootstrap */}
-        <Col xs={12} md={3} lg={4} className="p-0 d-flex">
-          <AsideLeft /> {/* <--- CHIAMATA DEL COMPONENTE */}
+    <Container fluid className="p-0 vh-100 d-flex m-0">
+      <Row className="mx-0 p-3 w-100 h-100">
+        <Col xs={12} sm={1} md={1} lg={3} xl={2} xxl={2} className="p-0 d-flex">
+          <AsideLeft />
         </Col>
-            
-        {/* 2. Colonna per il Contenuto Principale */}
-        <Col xs={12} md={9} lg={8} className="p-4">
+
+        <Col xs={12} sm={11} md={11} lg={9} xl={10} xxl={10} className="p-2 h-100 overflow-auto">
           <Outlet />
         </Col>
       </Row>
