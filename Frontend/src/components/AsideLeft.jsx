@@ -47,34 +47,34 @@ export default function AsideLeft() {
           <span className="tooltip-content">{collapsed && "Dashboard"}</span>
         </div>
 
-        {/* Link per le Analisi */}
+        {/* Link per i Prodotti */}
         <div className="tooltip-wrapper">
-          <Nav.Link as={Link} to="analytics" className={(location.pathname === "/engineer/analytics" ? "active " : "") + "d-flex align-items-center"}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <polyline points="4,18 10,12 14,16 20,8"/>
-              <circle cx="4" cy="18" r="2"/>
-              <circle cx="10" cy="12" r="2"/>
-              <circle cx="14" cy="16" r="2"/>
-              <circle cx="20" cy="8" r="2"/>
+          <Nav.Link as={Link} to="products" className={(location.pathname === "/engineer/products" ? "active " : "") + "d-flex align-items-center"}>
+            <svg xmlns="http://www.w3.org/2000/svg" 
+              width="24" height="24" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth={2}
+              strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12.89 1.17l8.23 4.74A2 2 0 0 1 22 7.64v8.72a2 2 0 0 1-1.28 1.81l-8.23 4.74a2 2 0 0 1-1.42 0l-8.23-4.74A2 2 0 0 1 2 16.36V7.64a2 2 0 0 1 1.28-1.81l8.23-4.74a2 2 0 0 1 1.42 0z"/>
+              <polyline points="2.32 6.75 12 12.38 21.68 6.75"/>
+              <polyline points="12 21.68 12 12.38 12 2.32"/>
             </svg>
-            {!collapsed && <span className="link">Analisi</span>}
+            {!collapsed && <span className="link">Prodotti</span>}
           </Nav.Link>
-          <span className="tooltip-content">{collapsed && "Analisi"}</span>
+          <span className="tooltip-content">{collapsed && "Prodotti"}</span>
         </div>
 
-        {/* Link per il Monitoraggio */}
+        {/* Link per il Movimenti */}
         <div className="tooltip-wrapper">
-          <Nav.Link as={Link} to="monitoring" className={(location.pathname === "/engineer/monitoring" ? "active " : "") + "d-flex align-items-center"}>
+          <Nav.Link as={Link} to="movements" className={(location.pathname === "/engineer/movements" ? "active " : "") + "d-flex align-items-center"}>
             <svg xmlns="http://www.w3.org/2000/svg" 
               width="24" height="24" 
               viewBox="0 0 24 24" fill="none" stroke="currentColor" 
               strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
             </svg>
-            {!collapsed && <span className="link">Monitoraggio</span>}
+            {!collapsed && <span className="link">Movimenti</span>}
           </Nav.Link>
-          <span className="tooltip-content">{collapsed && "Monitoraggio"}</span>
+          <span className="tooltip-content">{collapsed && "Movimenti"}</span>
         </div>
 
         {/* Link per gli Utenti */}
@@ -90,20 +90,20 @@ export default function AsideLeft() {
           <span className="tooltip-content">{collapsed && "Utenti"}</span>
         </div>
 
-        {/* Link per i Prodotti */}
+        {/* Link per le Magazzino */}
         <div className="tooltip-wrapper">
-          <Nav.Link as={Link} to="products" className={(location.pathname === "/engineer/products" ? "active " : "") + "d-flex align-items-center"}>
-            <svg xmlns="http://www.w3.org/2000/svg" 
-              width="24" height="24" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" strokeWidth={2}
-              strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12.89 1.17l8.23 4.74A2 2 0 0 1 22 7.64v8.72a2 2 0 0 1-1.28 1.81l-8.23 4.74a2 2 0 0 1-1.42 0l-8.23-4.74A2 2 0 0 1 2 16.36V7.64a2 2 0 0 1 1.28-1.81l8.23-4.74a2 2 0 0 1 1.42 0z"/>
-              <polyline points="2.32 6.75 12 12.38 21.68 6.75"/>
-              <polyline points="12 21.68 12 12.38 12 2.32"/>
+          <Nav.Link as={Link} to="warehouse" className={(location.pathname === "/engineer/warehouse" ? "active " : "") + "d-flex align-items-center"}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <polyline points="4,18 10,12 14,16 20,8"/>
+              <circle cx="4" cy="18" r="2"/>
+              <circle cx="10" cy="12" r="2"/>
+              <circle cx="14" cy="16" r="2"/>
+              <circle cx="20" cy="8" r="2"/>
             </svg>
-            {!collapsed && <span className="link">Prodotti</span>}
+            {!collapsed && <span className="link">Magazzino</span>}
           </Nav.Link>
-          <span className="tooltip-content">{collapsed && "Prodotti"}</span>
+          <span className="tooltip-content">{collapsed && "Magazzino"}</span>
         </div>
 
         <div className="separator w-100 mb-4 mx-0 separator-top"></div>

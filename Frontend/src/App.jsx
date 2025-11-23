@@ -6,8 +6,8 @@ import EngineerPage from "./pages/area/EngineerPage"
 import MechanicalPage from "./pages/area/MechanicalPage"
 
 import EngineerDashboard from "./pages/area/engineer/EngineerDashboard";
-import EngineerAnalytics from "./pages/area/engineer/EngineerAnalytics";
-import EngineerMonitoring from "./pages/area/engineer/EngineerMonitoring";
+import EngineerWarehouse from "./pages/area/engineer/EngineerWarehouse";
+import EngineerMovements from "./pages/area/engineer/EngineerMovements";
 import EngineerUsers from "./pages/area/engineer/EngineerUsers";
 import EngineerProducts from "./pages/area/engineer/EngineerProducts";
 import EngineerSettings from "./pages/area/engineer/EngineerSettings";
@@ -33,8 +33,8 @@ export default function App() {
           <Route path="/engineer"  element={ userRole === 'ENGINEER' ? <EngineerPage />  : <Navigate to="/login" replace /> }> {/* accedo all'area riservata all'ingegnere se il ruolo è ENGINEER */}
               {/* Route predefinita: dashboard */}
               <Route index element={<EngineerDashboard />} />
-              <Route path="analytics" element={<EngineerAnalytics />} />
-              <Route path="monitoring" element={<EngineerMonitoring />} />
+              <Route path="warehouse" element={<EngineerWarehouse />} />
+              <Route path="movements" element={<EngineerMovements />} />
               <Route path="users" element={<EngineerUsers />} />
               <Route path="products" element={<EngineerProducts />} />
               <Route path="settings" element={<EngineerSettings />} />
