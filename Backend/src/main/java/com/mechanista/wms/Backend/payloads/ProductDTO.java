@@ -19,7 +19,7 @@ public record ProductDTO(
         String measurement,
 
         @NotNull(message = "Il peso è obbligatorio!")
-        @Positive(message = "Il prezzo deve essere maggiore di 0!")
+        @Positive(message = "Il peso deve essere maggiore di 0!")
         Double weight,
 
         @NotNull(message = "Il prezzo è obbligatorio!")

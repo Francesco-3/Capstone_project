@@ -37,6 +37,8 @@ public class ProductService {
         newProduct.setDescription(payload.description());
         newProduct.setInsertionDate(payload.insertionDate());
 
+        Product saved = this.productRepository.save(newProduct);
+        log.info("Il prodotto " + saved.getProductCode() + " è stato salvato correttamente!");
         return newProduct;
     }
 

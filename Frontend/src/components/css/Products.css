@@ -1,0 +1,109 @@
+.card {
+    background: var(--card-bg);
+    color: var(--label-color);
+    border: var(--border);
+}
+
+.search-form {
+  --timing: 0.3s;
+  --width-of-input: 200px;
+  --height-of-input: 40px;
+  --border-height: 2px;
+  --input-bg: var(--input-color);
+  --border-color: var(--steel-skin);
+  --border-radius: 30px;
+  --after-border-radius: 1px;
+  padding-inline: 0.8em;
+  border-radius: var(--border-radius);
+  transition: border-radius 0.5s ease;
+  background: var(--input-bg,#fff);
+}
+
+.form:before {
+  content: "";
+  position: absolute;
+  background: var(--border-color);
+  transform: scaleX(0);
+  transform-origin: center;
+  width: 100%;
+  height: var(--border-height);
+  left: 0;
+  bottom: 0;
+  border-radius: 1px;
+  transition: transform var(--timing) ease;
+}
+
+.form:focus-within {
+  border-radius: var(--after-border-radius);
+}
+
+.input {
+  font-size: 0.9rem;
+  background-color: transparent;
+  padding-inline: 0.5em;
+  padding-block: 0.7em;
+}
+
+input:focus {
+  outline: none;
+}
+
+.form:focus-within:before {
+  transform: scale(1);
+}
+
+.reset {
+  opacity: 0;
+  visibility: hidden;
+}
+
+input:not(:placeholder-shown) ~ .reset {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* CARD PRODOTTI */
+.card-front, .card-back {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Stato Iniziale */
+.card-front {
+  opacity: 1;
+  visibility: visible;
+}
+
+.card-back {
+  opacity: 0;
+  visibility: hidden;
+  z-index: 2;
+}
+
+.card-container:hover .card-front {
+  opacity: 0;
+}
+
+.card-container:hover .card-back {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Paginazione */
+.pagination .page-link {
+    border: none;
+    color: var(--label-color);
+    background-color: transparent;
+    margin: 0 4px;
+    border-radius: 8px !important;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--card-bg);
+    border: var(--border);
+    font-weight: bold;
+}
+
+.pagination .page-item.disabled .page-link {
+    cursor: not-allowed;
+}
