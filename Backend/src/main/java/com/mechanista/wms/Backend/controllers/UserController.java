@@ -44,6 +44,13 @@ public class UserController {
         return userService.saveUser(payload);
     }
 
+    // GET http://localhost:3001/users
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Page<User> getAllUsers(@PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
+        return userService.findAll(pageable);
+    }
+
     // GET http://localhost:3001/users/me
     @GetMapping("/me")
     public User getProfile(@AuthenticationPrincipal User currentAuthenticateUser) {

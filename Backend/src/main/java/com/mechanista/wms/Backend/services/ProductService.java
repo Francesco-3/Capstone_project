@@ -89,7 +89,7 @@ public class ProductService {
         if (!found.getProductCode().equals(payload.productCode())) {
             this.productRepository.findByProductCode(payload.productCode())
                     .ifPresent(product -> {
-                        throw new BadRequestException("Il codice prodotto " + product.getProductCode() + "è già in uso!");
+                        throw new BadRequestException("Il codice prodotto " + product.getProductCode() + " è già in uso!");
                     });
         }
 

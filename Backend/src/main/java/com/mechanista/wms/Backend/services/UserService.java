@@ -1,6 +1,7 @@
 package com.mechanista.wms.Backend.services;
 
 import com.mechanista.wms.Backend.entities.Collocation;
+import com.mechanista.wms.Backend.entities.Product;
 import com.mechanista.wms.Backend.entities.User;
 import com.mechanista.wms.Backend.entities.enums.UserRole;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
@@ -51,6 +52,11 @@ public class UserService {
     }
 
     // READ
+
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
     public User findById(UUID userId) {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(userId));
     }

@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Row, Col, Card, Form, Spinner, Alert, Button, Pagination } from 'react-bootstrap' 
+import { Row, Col, Card, Form, Alert, Button, Pagination } from 'react-bootstrap' 
 import '../../../components/css/Products.css' 
 import box from "../../../assets/image/box.png" 
+import GearSet from '../../../components/Gear';
 
 export default function EngineerProducts() {
   // Recupera il token di autenticazione una sola volta
@@ -29,9 +30,7 @@ export default function EngineerProducts() {
   // Contiene l'oggetto del prodotto in modifica o null
   const [editingProduct, setEditingProduct] = useState(null); 
 
-  // ----------------------------------------------------------------------
-  // --- STATI E LOGICA PAGINAZIONE ---
-  // ----------------------------------------------------------------------
+  // --- PAGINAZIONE ---
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12; // 12 prodotti per pagina
   const maxPagesToShow = 5;   // Numero massimo di bottoni pagina visibili
@@ -103,9 +102,7 @@ export default function EngineerProducts() {
     
   }, [searchTerm, products]); 
 
-  // --- FUNZIONI UTILITY CRUD ---
-
-  // 3. GESTIONE RESET DEL FORM: Funzione per uscire dalla modalità modifica
+  // GESTIONE RESET DEL FORM: Funzione per uscire dalla modalità modifica
   const handleCancelEdit = () => {
     setEditingProduct(null);
     setProductName("");
@@ -119,7 +116,7 @@ export default function EngineerProducts() {
     setMsg(null); 
   };
 
-  // 4. GESTIONE MODIFICA: Pre-popola il form con i dati della card selezionata
+  // GESTIONE MODIFICA: Pre-popola il form con i dati della card selezionata
   const handleEdit = (product) => {
     setEditingProduct(product);
 
@@ -138,7 +135,7 @@ export default function EngineerProducts() {
     if (formElement) formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   
-  // 5. GESTIONE ELIMINA: Invia la richiesta DELETE all'API (URL AGGIORNATO)
+  // GESTIONE ELIMINA: Invia la richiesta DELETE all'API (URL AGGIORNATO)
   const handleDelete = async (productId) => {
     if (!window.confirm("Sei sicuro di voler eliminare questo prodotto? L'operazione è irreversibile.")) return;
 
@@ -171,10 +168,7 @@ export default function EngineerProducts() {
     }
   };
 
-
-  // --- FUNZIONI API ---
-
-  // 1. GET: Recupera la lista dei prodotti
+  // GET: Recupera la lista dei prodotti
   const fetchProducts = async () => {
     setLoading(true);
     setError(null);
@@ -191,9 +185,15 @@ export default function EngineerProducts() {
         throw new Error("Errore nel caricamento prodotti. Accesso negato o server non disponibile.");
 
       const data = await response.json();
-      const list = data.content || []; 
+
+      // 🔥 ORDINA PER CODICE PRODOTTO
+      const list = (data.content || []).sort((a, b) => 
+        a.productCode.localeCompare(b.productCode, undefined, { numeric: true })
+      );
+
       setProducts(list);
-      setFilteredProducts(list); 
+      setFilteredProducts(list);
+
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -202,7 +202,7 @@ export default function EngineerProducts() {
     }
   };
 
-  // 2. POST/PUT: Invia i dati per creare o modificare un prodotto (URL AGGIORNATO)
+  // POST/PUT: Invia i dati per creare o modificare un prodotto (URL AGGIORNATO)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg(null);
@@ -276,83 +276,45 @@ export default function EngineerProducts() {
     }
   };
 
-  // ----------------------------------------------------------------------
-  // --- RENDERING ---
-  // ----------------------------------------------------------------------
   return (
     <Row className="mx-0 h-100">
       
       {/* --- COLONNA SINISTRA: LISTA --- */}
-      <Col xs={12} md={12} lg={9} xl={9} xxl={9}>
-        <Card>
-          <Card.Body>
-            {/* INPUT RICERCA */}
-            <Form className="search-form d-flex align-items-center position-relative" onSubmit={(e) => e.preventDefault()}>
-              <button className='border-0 bg-transparent' style={{ color: "#8b8ba7"}}>
-                <svg width="17" height="15" className="mb-1" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
-                  <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" strokeWidth={1.333} strokeLinecap="round" strokeLinejoin="round"></path>
-                </svg>
-              </button>
+      <Col xs={{ span: 12, order: 1 }} md={{ span: 12, order: 2 }} lg={{ span: 9,  order: 1 }} xl={{ span: 9,  order: 1 }} xxl={{ span: 9, order: 1 }}>
 
-              <input className="input w-100 h-100 border-0" placeholder="Cerca per nome o codice..." type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <Row className="gy-4 mt-5">
+          {/* LOADING SPINNER LISTA */}
+          {loading && <div className="justify-content-center d-flex align-items-center w-100" style={{ height: "90vh" }}><GearSet /></div>}
 
-              <button className='reset border-0 bg-transparent' style={{ color: "#8b8ba7" }} type="button" onClick={() => setSearchTerm("")}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="mb-1" width="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </Form>
-          </Card.Body>
-        </Card>
-
-        {/* FEEDBACK ERRORI LISTA */}
-        {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
-        
-        {/* LOADING SPINNER LISTA */}
-        {loading && <div className="text-center mt-5"><Spinner animation="border" variant="primary" /></div>}
-
-        <Row className="gy-4 mt-3">
           {/* Mappa solo i prodotti della pagina corrente */}
           {!loading && currentProducts.map((item) => (
             <Col key={item.id_product || item.productCode} xs={12} sm={12} md={6} lg={6} xl={4} xxl={3}>
               <Card className="card-container w-100 p-0 position-relative overflow-hidden" style={{ height: "325px" }}>
+
                 {/* CARD FRONT (visibile di default) */}
                 <div className="card-front w-100 h-100 d-flex flex-column justify-content-between">
                   <div style={{ height: "60%", width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Card.Img variant="top" src={box} style={{ objectFit: "contain" }} />
                   </div>
+
                   <div className="text-center mb-3">
                     <Card.Title className="fw-bold m-0 text-truncate px-2">{item.productName}</Card.Title>
                     <Card.Text className="m-0">Quantità: {item.stock}</Card.Text>
                     <Card.Text className="small">Codice: {item.productCode}</Card.Text>
                   </div>
                 </div>
+
                 {/* CARD BACK (visibile all'hover) */}
                 <div className="card-back position-absolute w-100 h-100 p-3 d-flex flex-column justify-content-center align-items-start">
                   <Card.Text><strong>Peso:</strong> {item.weight} kg</Card.Text>
-                  <Card.Text><strong>Grandezza:</strong> {item.measurement}</Card.Text>
-                  <Card.Text><strong>Prezzo:</strong> €{item.price}</Card.Text>
+                  <Card.Text><strong>Grandezza:</strong> {item.measurement} cm</Card.Text>
+                  <Card.Text><strong>Prezzo:</strong> {item.price}€</Card.Text>
                   <Card.Text><strong>Data:</strong> {item.insertionDate}</Card.Text>
                   <Card.Text className="text-truncate w-100"><strong>Desc.:</strong> {item.description}</Card.Text>
-                  
-                  {/* --- BOTTONI AZIONE --- */}
-                  <div className="d-flex gap-2 mt-3 w-100">
-                    <Button 
-                      variant="primary" 
-                      size="sm"
-                      onClick={() => handleEdit(item)}
-                      disabled={loading}
-                    >
-                      Modifica
-                    </Button>
-                    <Button 
-                      variant="danger" 
-                      size="sm"
-                      onClick={() => handleDelete(item.id_product)}
-                      disabled={loading}
-                    >
-                      Elimina
-                    </Button>
+
+                  <div className="d-flex justify-content-around mt-3 w-100">
+                    <Button variant="primary" size="sm" onClick={() => handleEdit(item)} disabled={loading}>Modifica</Button>
+                    <Button variant="danger" size="sm" onClick={() => handleDelete(item.id_product)} disabled={loading}>Elimina</Button>
                   </div>
                 </div>
               </Card>
@@ -360,7 +322,11 @@ export default function EngineerProducts() {
           ))}
           
           {/* MESSAGGIO SE LISTA FILTRATA VUOTA */}
-          {!loading && filteredProducts.length === 0 && ( <div className="text-center w-100">Nessun prodotto trovato.</div> )}
+          {!loading && filteredProducts.length === 0 && ( 
+            <div className="justify-content-center d-flex align-items-center w-100" style={{ color: "var(--label-color)", height: "90vh"}}>
+              <h2>Nessn prodotto trovato</h2>
+            </div> 
+          )}
         </Row>
         
         {/* --- COMPONENTE PAGINAZIONE --- */}
@@ -393,84 +359,104 @@ export default function EngineerProducts() {
             </Pagination>
           </div>
         )}
-
       </Col>
 
-      {/* --- COLONNA DESTRA: FORM (AGGIORNATO) --- */}
-      <Col xs={12} md={12} lg={3} xl={3} xxl={3}>
-        
-        {/* TITOLO DINAMICO */}
-        <h2 className='my-5'>
+      {/* --- COLONNA DESTRA: SEARCH & FORM --- */}
+      <Col xs={{ span: 12, order: 2 }} md={{ span: 12, order: 1 }} lg={{ span: 3, order: 2 }} xl={{ span: 3, order: 2 }} xxl={{ span: 3, order: 2 }}>
+        <Row className='mt-5 gap-3'>
+          <Card>
+            <Card.Body>
+              {/* INPUT RICERCA */}
+              <Form className="search-form d-flex align-items-center position-relative" onSubmit={(e) => e.preventDefault()}>
+                <button className='border-0 bg-transparent' style={{ color: "#8b8ba7"}}>
+                  <svg width="17" height="15" className="mb-1" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
+                    <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" strokeWidth={1.333} strokeLinecap="round" strokeLinejoin="round"></path>
+                  </svg>
+                </button>
+
+                <input className="input w-100 h-100 border-0" placeholder="Cerca per nome o codice..." type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+
+                <button className='reset border-0 bg-transparent' style={{ color: "#8b8ba7" }} type="button" onClick={() => setSearchTerm("")}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="mb-1" width="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </Form>
+            </Card.Body>
+          </Card>
+          
+          {/* TITOLO DINAMICO 
+          <h2 className='my-5' style={{ color: "var(--label-color)"}}>
             {editingProduct ? `Modifica: ${editingProduct.productName}` : 'Aggiungi un prodotto'}
-        </h2>
-        
-        {/* AGGIUNTO ID PER LO SCROLL */}
-        <Card id="product-form-card" className="shadow-lg rounded-4" style={{ backgroundColor: "var(--card-bg)", border: "var(--border)" }}>
-          <Card.Body className="p-4">
-            
-            {/* MESSAGGIO DI SUCCESSO/ERRORE */}
-            {msg && <Alert variant={msg.variant}>{msg.text}</Alert>}
+          </h2> */}
+          
+          {/* AGGIUNTO ID PER LO SCROLL */}
+          <Card id="product-form-card" className="shadow-lg rounded-4" style={{ backgroundColor: "var(--card-bg)", border: "var(--border)" }}>
+            <Card.Body className="p-4">
+                
+              {/* BOTTONE ANNULLA MODIFICA (Mostrato solo se in editing) */}
+              {editingProduct && (
+                <Button variant="outline-secondary" size="sm" className="mb-3 w-100" onClick={handleCancelEdit}>Annulla Modifica</Button>
+              )}
               
-            {/* BOTTONE ANNULLA MODIFICA (Mostrato solo se in editing) */}
-            {editingProduct && (
-                <Button variant="outline-secondary" size="sm" className="mb-3 w-100" onClick={handleCancelEdit}>
-                    Annulla Modifica
-                </Button>
-            )}
-            
-            <Form className="form mx-auto d-flex gap-3 flex-column" onSubmit={handleSubmit}>
-              
-              <span className="input-span">
-                <input type="text" id="product_name" name='product_name' value={productName} onChange={(e) => setProductName(e.target.value)} required />
-                <label htmlFor="product_name" className="label">Nome Prodotto</label>
-              </span>
+              <Form className="form mx-auto d-flex gap-3 flex-column" onSubmit={handleSubmit}>
+                
+                <span className="input-span">
+                  <input type="text" id="product_name" name='product_name' value={productName} onChange={(e) => setProductName(e.target.value)} required />
+                  <label htmlFor="product_name" className="label">Nome Prodotto</label>
+                </span>
 
-              <span className="input-span">
-                <input type="text" id="measurement" name='measurement' value={measurement} onChange={(e) => setMeasurement(e.target.value)} required />
-                <label htmlFor="measurement" className="label">Grandezza</label>
-              </span>
+                <span className="input-span">
+                  <input type="text" id="measurement" name='measurement' value={measurement} onChange={(e) => setMeasurement(e.target.value)} required />
+                  <label htmlFor="measurement" className="label">Grandezza</label>
+                </span>
 
-              <span className="input-span">
-                <input type="number" step="0.01" id="weight" name='weight' value={weight} onChange={(e) => setWeight(e.target.value)} required />
-                <label htmlFor="weight" className="label">Peso</label>
-              </span>
+                <span className="input-span">
+                  <input type="number" step="0.01" id="weight" name='weight' value={weight} onChange={(e) => setWeight(e.target.value)} required />
+                  <label htmlFor="weight" className="label">Peso</label>
+                </span>
 
-              <span className="input-span">
-                <input type="number" step="0.01" id="price" name="price" value={price} onChange={(e) => setPrice(e.target.value)} required />
-                <label htmlFor="price" className="label">Prezzo €</label>
-              </span>
+                <span className="input-span">
+                  <input type="number" step="0.01" id="price" name="price" value={price} onChange={(e) => setPrice(e.target.value)} required />
+                  <label htmlFor="price" className="label">Prezzo €</label>
+                </span>
 
-              <span className="input-span">
-                <input type="number" id="stock" name="stock" value={stock} onChange={(e) => setStock(e.target.value)} required />
-                <label htmlFor="stock" className="label">Quantità</label>
-              </span>
+                <span className="input-span">
+                  <input type="number" id="stock" name="stock" value={stock} onChange={(e) => setStock(e.target.value)} required />
+                  <label htmlFor="stock" className="label">Quantità</label>
+                </span>
 
-              <span className="input-span">
-                <input type="text" id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
-                <label htmlFor="description" className="label">Descrizione</label>
-              </span>
+                <span className="input-span">
+                  <input type="text" id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+                  <label htmlFor="description" className="label">Descrizione</label>
+                </span>
 
-              <span className="input-span">
-                <input type="text" id="product_code" name="product_code" value={productCode} onChange={(e) => setProductCode(e.target.value)} required />
-                <label htmlFor="product_code" className="label">Codice Prodotto</label>
-              </span>
+                <span className="input-span">
+                  <input type="text" id="product_code" name="product_code" value={productCode} onChange={(e) => setProductCode(e.target.value)} required />
+                  <label htmlFor="product_code" className="label">Codice Prodotto</label>
+                </span>
 
-              <span className="input-span">
-                <input type="date" id="date" name="date" required value={date} onChange={(e) => setDate(e.target.value)} />
-                <label htmlFor="date" className="label">Data</label>
-              </span>
+                <span className="input-span">
+                  <input type="date" id="date" name="date" required value={date} onChange={(e) => setDate(e.target.value)} />
+                  <label htmlFor="date" className="label">Data</label>
+                </span>
 
-              {/* PULSANTE SUBMIT DINAMICO: "Salva Modifica" o "Aggiungi" */}
-              <input 
-                className="submit btn" 
-                type="submit" 
-                value={loading ? "Salvataggio..." : (editingProduct ? "Salva Modifica" : "Aggiungi")} 
-                disabled={loading} 
-              />
-            </Form>
-          </Card.Body>
-        </Card>
+                {/* PULSANTE SUBMIT DINAMICO: "Salva Modifica" o "Aggiungi" */}
+                <input className="submit btn" type="submit" value={loading ? "Salvataggio..." : (editingProduct ? "Salva Modifica" : "Aggiungi")} disabled={loading} />
+              </Form>
+            </Card.Body>
+          </Card>
+        </Row>
+
+        <div className="mt-3">
+          {/* FEEDBACK ERRORI LISTA */}
+          {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+
+          {/* MESSAGGIO DI SUCCESSO/ERRORE */}
+          {msg && <Alert variant={msg.variant}>{msg.text}</Alert>}
+        </div>
       </Col>
+
     </Row>
   )
 }
