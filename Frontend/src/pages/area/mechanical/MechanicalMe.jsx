@@ -1,11 +1,10 @@
-// src/pages/ProfileManagement.jsx
 import { useState, useEffect } from 'react' // Importazione corretta di React hooks
 import { useNavigate } from 'react-router-dom' // Assicurati di importare useNavigate da react-router-dom
 import { Button, Row, Col, Form, Card, Alert, Spinner } from 'react-bootstrap'
 import avatar from '../../../assets/image/avatar.png'
 import '../../../components/css/Me.css' // Mantenuto per le classi come 'fx-block' e 'toggle'
 
-export default function ProfileManagement() {
+export default function MechanicalMe() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   

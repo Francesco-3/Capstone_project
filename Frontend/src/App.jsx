@@ -15,6 +15,12 @@ import EngineerSupport from "./pages/area/engineer/EngineerSupport";
 import EngineerNotifications from "./pages/area/engineer/EngineerNotifications";
 import EngineerMe from "./pages/area/engineer/EngineerMe";
 
+import MechanicalMe from "./pages/area/mechanical/MechanicalMe";
+import SectionA from "./pages/area/mechanical/SectionA";
+import SectionB from "./pages/area/mechanical/SectionB";
+import SectionC from "./pages/area/mechanical/SectionC";
+import SectionD from "./pages/area/mechanical/SectionD";
+
 import NotFound from './pages/NotFound';
 import { useState } from "react"
 
@@ -25,7 +31,6 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <main>
         <Routes>
           <Route path="/" element={ !userRole ? <Navigate to="login" replace /> : userRole === 'ENGINEER' ? <Navigate to="/engineer" replace /> : <Navigate to="/mechanical" replace /> } /> {/* Pagina iniziale reindirizza in base al ruolo */}
           <Route path="/login" element={ !userRole ? <LoginPage onLoginSuccess={handleLoginSuccess} /> : userRole === 'ENGINEER' ? <Navigate to="/engineer" replace /> : <Navigate to="/mechanical" replace /> } /> {/* Pagina di login */}
@@ -44,10 +49,16 @@ export default function App() {
               <Route path="me" element={ <EngineerMe />} />
           </Route>
 
-          <Route path="/mechanical" element={ userRole === 'MECHANICAL' ? <MechanicalPage /> : <Navigate to="/login" replace /> } /> {/* accedo all'area riservata al meccanico SOLO se il ruolo è MECHANICAL */}
+          <Route path="/mechanical" element={ userRole === 'MECHANICAL' ? <MechanicalPage /> : <Navigate to="/login" replace /> }> {/* accedo all'area riservata al meccanico SOLO se il ruolo è MECHANICAL */}
+              <Route path="me" element={ <MechanicalMe />} />
+              <Route path="section-A" element={ <SectionA />} />
+              <Route path="section-B" element={ <SectionB />} />
+              <Route path="section-C" element={ <SectionC />} />
+              <Route path="section-D" element={ <SectionD />} />
+          </Route>
+
           <Route path='*' element={<NotFound />} /> {/* Pagina 404 per rotte non trovate */}
         </Routes>
-      </main>
     </BrowserRouter>
   )
 }

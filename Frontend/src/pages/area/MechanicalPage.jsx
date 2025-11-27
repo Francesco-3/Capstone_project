@@ -1,22 +1,20 @@
-import "bootstrap/dist/css/bootstrap.min.css"
-import "../../App.css"
-import { Container, Row, Col, Card, Form, Alert } from "react-bootstrap"
+import Navbar from "../../components/Navbar"
+import Sections from '../../components/Sections'
+import { Container, Row, Col } from 'react-bootstrap'
+import { Outlet } from "react-router-dom"
 
-export default function DashboardPage() {
+export default function MechanicalPage() {
   return (
-    <Container fluid className="d-flex align-items-center" style={{ paddingTop: 56 }}>
-        <Row className="w-100 justify-content-center">
-            <Col xs={11} sm={10} md={8} lg={5} xl={4}>
-                <Card className="shadow-lg rounded border">
-                    <Card.Body className="p-4"></Card.Body>
-                        <h4 className="mb-3">Mechanical Area</h4>
-                        <p>Welcome to your mechanical area!</p>
-                        <button onClick={"/login"}
-                            className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-150 ease-in-out"
-                        >Logout</button>
-                </Card>
-            </Col>
-        </Row>
-    </Container>
-  )
+        <Container fluid className="p-0 vh-100 d-flex m-0">
+            <Row className="mx-0 p-3 w-100 h-100">
+                <Col xs={11} sm={10} md={6} lg={8} xl={10} xxl={12} className="p-0 d-flex flex-column">
+                    <Navbar />
+
+                    <Sections />
+
+                    <Outlet />
+                </Col>
+            </Row>
+        </Container>
+    )
 }

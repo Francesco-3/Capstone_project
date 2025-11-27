@@ -1,6 +1,7 @@
 package com.mechanista.wms.Backend.controllers;
 
 import com.mechanista.wms.Backend.entities.Rack;
+import com.mechanista.wms.Backend.entities.Section;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.payloads.RackDTO;
 import com.mechanista.wms.Backend.services.RackService;
@@ -17,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -53,6 +55,13 @@ public class RackController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Rack getRackById(@RequestParam("rack") UUID rackId) { return rackService.findById(rackId); }
+
+    @GetMapping("/by-section")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Rack> getRacksBySectionId(@RequestParam("sectionId") Section sectionId) {
+        return rackService.findBySectionId(sectionId);
+    }
+
 
     // GET http://localhost:3001/racks/by-code?rackCode={rackCode}
     @GetMapping("/by-code")

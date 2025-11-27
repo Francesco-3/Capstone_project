@@ -1,5 +1,6 @@
 package com.mechanista.wms.Backend.controllers;
 
+import com.mechanista.wms.Backend.entities.Rack;
 import com.mechanista.wms.Backend.entities.Shelf;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.payloads.ShelfDTO;
@@ -17,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -58,6 +60,14 @@ public class ShelfController {
     @GetMapping("/by-number")
     @ResponseStatus(HttpStatus.OK)
     public Shelf getShelfByShelfNumber(@RequestParam("shelfNumber") int shelfNumber) { return shelfService.findByShelfNumber(shelfNumber); }
+
+    // GET http://localhost:3001/shelfs/by-rack?rackId={UUID}
+    @GetMapping("/by-rack")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Shelf> getShelfsByRack(@RequestParam("rackId") Rack rackId) {
+        return shelfService.findByRackId(rackId);
+    }
+
 
     // PUT http://localhost:3001/shelfs/update?shelf={shelfId}
     @PutMapping("/update")

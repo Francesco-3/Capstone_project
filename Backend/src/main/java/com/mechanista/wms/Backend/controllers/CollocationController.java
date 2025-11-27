@@ -6,6 +6,7 @@ import com.mechanista.wms.Backend.entities.Product;
 import com.mechanista.wms.Backend.entities.Shelf;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.payloads.CollocationDTO;
+import com.mechanista.wms.Backend.payloads.ProductOnShelfDTO;
 import com.mechanista.wms.Backend.services.CollocationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -65,6 +66,11 @@ public class ShelfService {
         return shelfRepository.findByShelfNumber(shelfNumber)
                 .orElseThrow(() -> new NotFoundException("Mensola n. " + shelfNumber + " non trovata!"));
     }
+
+    public List<Shelf> findByRackId(Rack rackId) {
+        return shelfRepository.findByRackId(rackId);
+    }
+
 
     // UPDATE
     public Shelf findByIdAndUpdate(UUID shelfId, ShelfDTO payload) {

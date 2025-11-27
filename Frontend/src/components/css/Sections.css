@@ -1,0 +1,8 @@
+.box {
+  background: var(--card-bg);
+  box-shadow: rgba(23, 23, 43, 0.397) 0px 10px 15px 15px inset, rgba(0, 0, 0, 0.726) 0px 10px 15px 15px inset;
+}
+
+.box:hover {
+  box-shadow: rgba(0, 0, 0, 0.726) 0px 10px 15px 15px inset, rgba(23, 23, 43, 0.397) 0px 10px 15px 15px inset;
+}

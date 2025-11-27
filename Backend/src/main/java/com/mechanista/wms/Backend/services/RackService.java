@@ -1,10 +1,12 @@
 package com.mechanista.wms.Backend.services;
 
+import com.mechanista.wms.Backend.entities.Product;
 import com.mechanista.wms.Backend.entities.Rack;
 import com.mechanista.wms.Backend.entities.Section;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.exceptions.NotFoundException;
 import com.mechanista.wms.Backend.payloads.RackDTO;
+import com.mechanista.wms.Backend.payloads.SectionDTO;
 import com.mechanista.wms.Backend.repositories.RackRepository;
 import com.mechanista.wms.Backend.repositories.SectionRepository;
 import com.mechanista.wms.Backend.repositories.ShelfRepository;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -59,6 +62,15 @@ public class RackService {
                 .orElseThrow(() -> new NotFoundException("Rack con l'id " + rackId + " non trovato!"));
     }
 
+    public List<Rack> findBySectionId(Section sectionId) {
+        List<Rack> racks = this.rackRepository.findBySectionId(sectionId);
+        if (racks.isEmpty()) {
+            throw new NotFoundException("Nessun prodotto trovato per la data di inserimento: ");
+        }
+
+        return racks;
+    }
+
     public Rack findByRackCode(String rackCode) {
         return rackRepository.findByRackCode(rackCode)
                 .orElseThrow(() -> new NotFoundException("Rack " + rackCode + " non trovato!"));
@@ -92,11 +104,11 @@ public class RackService {
     public void findByIdAndDelete(UUID rackId) {
         Rack rack = this.findById(rackId);
 
-        // controllo che il rack non sia assegnato
+        /* controllo che il rack non sia assegnato
         if (shelfRepository.findByRackId(rack).isPresent()) {
             throw new BadRequestException("Impossibile eliminare il rack '" + rack.getRackCode() +
                     "' perché contiene una o più mensole.");
-        }
+        }*/
 
         // elimino
         rackRepository.delete(rack);
