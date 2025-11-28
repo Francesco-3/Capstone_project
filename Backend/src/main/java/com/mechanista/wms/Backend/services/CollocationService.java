@@ -52,11 +52,11 @@ public class CollocationService {
             throw new BadRequestException("Il movimento può riguardare solo una destinazione alla volta!");
         }
 
-        // controllo duplicati
+        /* controllo duplicati
         Optional<Collocation> existingCollocation = collocationRepository
                 .findByProductIdAndShelfIdAndPalletId(product, shelf, pallet);
 
-       /* if (existingCollocation.isPresent()) {
+        if (existingCollocation.isPresent()) {
             UUID found = existingCollocation.get().getId_collocation();
             if (existingCollocationId.isEmpty() || !existingCollocationId.get().equals(found)) {
                 throw new BadRequestException("Il prodotto  è già collocato nella posizione specificata!");
@@ -73,7 +73,7 @@ public class CollocationService {
         return newCollocation;
     }
 
-    // CREATE (Metodo originale per la creazione manuale di Collocation)
+    // CREATE
     public Collocation saveCollocation(CollocationDTO payload) {
         Collocation newCollocation = this.mapToEntity(payload, Optional.empty());
         Collocation saved = collocationRepository.save(newCollocation);
@@ -82,9 +82,7 @@ public class CollocationService {
         return saved;
     }
 
-    // ***************************************************************
-    // *** METODO AGGIUNTO: Gestisce l'aggiornamento della Collocazione ***
-    // ***************************************************************
+    // Gestisce l'aggiornamento della Collocazione //
     @Transactional
     public Collocation handleMovement(Product product, Shelf shelf, Pallet pallet, int quantityChange, MovementType type) {
 
@@ -92,10 +90,10 @@ public class CollocationService {
         Optional<Collocation> existingCollocationOpt;
 
         if (shelf != null && pallet == null) {
-            // Ricerca per ripiano (usato nella Sezione A)
+            // Ricerca per ripiano
             existingCollocationOpt = collocationRepository.findByProductIdAndShelfId(product, shelf);
         } else if (pallet != null) {
-            // Ricerca per pallet (usato altrove, ma gestito in modo generico)
+            // Ricerca per pallet
             existingCollocationOpt = collocationRepository.findByProductIdAndShelfIdAndPalletId(product, shelf, pallet);
         } else {
             throw new BadRequestException("La collocazione richiede uno ShelfId o un PalletId.");
@@ -150,10 +148,6 @@ public class CollocationService {
 
         return collocation;
     }
-    // ***************************************************************
-    // *** FINE METODO AGGIUNTO ***
-    // ***************************************************************
-
 
     // READ
     public Page<Collocation> findAll(Pageable pageable) {

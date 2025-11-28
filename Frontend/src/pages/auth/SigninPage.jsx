@@ -1,6 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css"
 import { useState } from "react"
 import "../../App.css"
+import GearSet from "../../components/Gear"
+import PasswordField from "../../components/PasswordField"
 import { Container, Row, Col, Card, Form, Alert } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 
@@ -36,9 +38,7 @@ export default function SigninPage() {
       let data = null
       try {
         data = raw ? JSON.parse(raw) : null
-      } catch {
-        // ignore non-JSON error bodies
-      }
+      } catch { /* */ }
 
       let text = "Registrazione fallita" //backend non attivo
       if (Array.isArray(data)) text = data.join(", ")
@@ -53,6 +53,8 @@ export default function SigninPage() {
 
   return (
     <Container fluid className="min-vh-100 d-flex align-items-center justify-content-center">
+      <GearSet positionClass="left" />
+
       <Row className="w-100 justify-content-center">
         <Col xs={11} sm={10} md={8} lg={5} xl={4}>
           <Card className="shadow-lg rounded-4" style={{ backgroundColor: "var(--card-bg)", border: "var(--border)" }}>
@@ -78,14 +80,7 @@ export default function SigninPage() {
                   <label htmlFor="email" className="label">Email</label>
                 </span>
 
-                <span className="input-span">
-                  <input
-                    type="password" id="password"
-                    name="password" value={password} required
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <label htmlFor="password" className="label">Password</label>
-                </span>
+                <PasswordField value={password} onChange={(e) => setPassword(e.target.value)} />
 
                 <span className="input-span">
                   <input
@@ -118,6 +113,8 @@ export default function SigninPage() {
           </Card>
         </Col>
       </Row>
+
+      <GearSet positionClass="right" />
     </Container>
   )
 }

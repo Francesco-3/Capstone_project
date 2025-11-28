@@ -7,12 +7,14 @@ import MechanicalPage from "./pages/area/MechanicalPage"
 
 import EngineerDashboard from "./pages/area/engineer/EngineerDashboard";
 import EngineerWarehouse from "./pages/area/engineer/EngineerWarehouse";
+import SectionA2 from "./pages/area/engineer/SectionA2";
+import SectionB2 from "./pages/area/engineer/SectionB2";
+import SectionC2 from "./pages/area/engineer/SectionC2";
+import SectionD2 from "./pages/area/engineer/SectionD2";
 import EngineerMovements from "./pages/area/engineer/EngineerMovements";
 import EngineerUsers from "./pages/area/engineer/EngineerUsers";
 import EngineerProducts from "./pages/area/engineer/EngineerProducts";
-import EngineerSettings from "./pages/area/engineer/EngineerSettings";
 import EngineerSupport from "./pages/area/engineer/EngineerSupport";
-import EngineerNotifications from "./pages/area/engineer/EngineerNotifications";
 import EngineerMe from "./pages/area/engineer/EngineerMe";
 
 import MechanicalMe from "./pages/area/mechanical/MechanicalMe";
@@ -36,18 +38,26 @@ export default function App() {
           <Route path="/login" element={ !userRole ? <LoginPage onLoginSuccess={handleLoginSuccess} /> : userRole === 'ENGINEER' ? <Navigate to="/engineer" replace /> : <Navigate to="/mechanical" replace /> } /> {/* Pagina di login */}
           <Route path="/signin" element={<SigninPage />} /> {/* Pagina di registrazione */}
           
-          <Route path="/engineer"  element={ userRole === 'ENGINEER' ? <EngineerPage />  : <Navigate to="/login" replace /> }> {/* accedo all'area riservata all'ingegnere se il ruolo è ENGINEER */}
-              {/* Route predefinita: dashboard */}
-              <Route index element={<EngineerDashboard />} />
-              <Route path="warehouse" element={<EngineerWarehouse />} />
-              <Route path="movements" element={<EngineerMovements />} />
-              <Route path="users" element={<EngineerUsers />} />
-              <Route path="products" element={<EngineerProducts />} />
-              <Route path="settings" element={<EngineerSettings />} />
-              <Route path="support" element={<EngineerSupport />} />
-              <Route path="notifications" element={<EngineerNotifications />} />
-              <Route path="me" element={ <EngineerMe />} />
-          </Route>
+<Route path="/engineer" element={ userRole === 'ENGINEER' ? <EngineerPage /> : <Navigate to="/login" replace /> }>
+  {/* Dashboard */}
+  <Route index element={<EngineerDashboard />} />
+
+  {/* Warehouse con sezioni nidificate */}
+  <Route path="warehouse" element={<EngineerWarehouse />}>
+    <Route index element={<SectionA2 />} />      {/* default se vuoi */}
+    <Route path="section-A" element={<SectionA2 />} />
+    <Route path="section-B" element={<SectionB2 />} />
+    <Route path="section-C" element={<SectionC2 />} />
+    <Route path="section-D" element={<SectionD2 />} />
+  </Route>
+
+  <Route path="movements" element={<EngineerMovements />} />
+  <Route path="users" element={<EngineerUsers />} />
+  <Route path="products" element={<EngineerProducts />} />
+  <Route path="support" element={<EngineerSupport />} />
+  <Route path="me" element={<EngineerMe />} />
+</Route>
+
 
           <Route path="/mechanical" element={ userRole === 'MECHANICAL' ? <MechanicalPage /> : <Navigate to="/login" replace /> }> {/* accedo all'area riservata al meccanico SOLO se il ruolo è MECHANICAL */}
               <Route path="me" element={ <MechanicalMe />} />

@@ -61,6 +61,7 @@ public class PalletController {
     @ResponseStatus(HttpStatus.OK)
     public Pallet getPalletByCode(@RequestParam("palletCode") String palletCode) { return palletService.findByPalletCode(palletCode); }
 
+    // GET http://localhost:3001/pallets/by-section?sectionId={sectionId}
     @GetMapping("/by-section")
     @ResponseStatus(HttpStatus.OK)
     public List<Pallet> getPalletBySectionId(@RequestParam("sectionId") Section sectionId) {

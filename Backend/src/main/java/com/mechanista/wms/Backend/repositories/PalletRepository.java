@@ -1,7 +1,6 @@
 package com.mechanista.wms.Backend.repositories;
 
 import com.mechanista.wms.Backend.entities.Pallet;
-import com.mechanista.wms.Backend.entities.Rack;
 import com.mechanista.wms.Backend.entities.Section;
 import org.springframework.data.jpa.repository.JpaRepository;
 

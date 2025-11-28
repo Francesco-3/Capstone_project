@@ -56,6 +56,7 @@ public class RackController {
     @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Rack getRackById(@RequestParam("rack") UUID rackId) { return rackService.findById(rackId); }
 
+    // GET http://localhost:3001/racks/by-section?sectionCode={sectionCode}
     @GetMapping("/by-section")
     @ResponseStatus(HttpStatus.OK)
     public List<Rack> getRacksBySectionId(@RequestParam("sectionId") Section sectionId) {

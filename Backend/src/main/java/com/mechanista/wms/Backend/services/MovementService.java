@@ -35,7 +35,6 @@ public class MovementService {
     @Autowired
     private PalletService palletService;
 
-    // *** INIEZIONE AGGIUNTA ***
     @Autowired
     private CollocationService collocationService;
 
@@ -44,7 +43,7 @@ public class MovementService {
         // recupero il prodotto
         Product product = productService.findById(payload.productId());
 
-        // recupero l'utente (obbligatoriamente)
+        // recupero l'utente
         User user = userService.findById(payload.userId());
 
         // recupero la mensola o il pallet
@@ -74,7 +73,7 @@ public class MovementService {
         Movement newMovement = new Movement();
         newMovement.setProductId(product);
         newMovement.setShelfId(shelf);
-        newMovement.setPalletId(pallet); // Assicurati di impostare il PalletId
+        newMovement.setPalletId(pallet);
         newMovement.setUserId(user);
         newMovement.setQuantity(payload.quantity());
         newMovement.setMovementType(payload.movementType());
@@ -83,10 +82,10 @@ public class MovementService {
         return newMovement;
     }
 
-    // CREATE (Metodo originale di salvataggio, ora transazionale e completo)
+    // CREATE
     @Transactional
     public Movement saveMovement(MovementDTO payload) {
-        // 1. Mappa il payload in una Movement entity
+        // Mappa il payload in una Movement entity
         Movement newMovement = this.mapToEntity(payload, Optional.empty());
 
         Product product = newMovement.getProductId();
@@ -95,18 +94,18 @@ public class MovementService {
         int quantity = newMovement.getQuantity();
         MovementType type = newMovement.getMovementType();
 
-        // 2. Aggiorna la Collocazione (il ripiano/pallet specifico)
+        // Aggiorna la Collocazione (il ripiano/pallet specifico)
         // Se l'operazione fallisce (es. quantità insufficiente), l'intera transazione viene annullata.
         collocationService.handleMovement(product, shelf, pallet, quantity, type);
 
-        // 3. Aggiorna la quantità totale sul Prodotto
+        // Aggiorna la quantità totale sul Prodotto
         if (type == MovementType.INBOUND) {
             productService.increaseTotalStock(product.getId_product(), quantity);
         } else if (type == MovementType.OUTBOUND) {
             productService.decreaseTotalStock(product.getId_product(), quantity);
         }
 
-        // 4. Salva il Movimento
+        // Salva il Movimento
         Movement saved = movementRepository.save(newMovement);
 
         log.info("Movimento di tipo {} creato con successo per il prodotto {}", type, saved.getProductId().getProductCode());

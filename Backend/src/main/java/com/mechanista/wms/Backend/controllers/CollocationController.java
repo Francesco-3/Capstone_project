@@ -34,7 +34,6 @@ public class CollocationController {
     // POST http://localhost:3001/collocations
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Collocation createCollocation(@RequestBody @Validated CollocationDTO payload, BindingResult validationResult) {
         if(validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
@@ -56,7 +55,6 @@ public class CollocationController {
     // GET http://localhost:3001/collocations/by-id?collocation={collocationId}
     @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Collocation getCollocationById(@RequestParam("collocation") UUID collocationId) { return collocationService.findById(collocationId); }
 
     // GET http://localhost:3001/collocations/by-product?product={productId}
@@ -83,7 +81,6 @@ public class CollocationController {
     // PUT http://localhost:3001/collocations/update?collocation={collocationId}
     @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Collocation updateCollocation(@RequestParam("collocation") UUID collocationId, @RequestBody @Valid CollocationDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String messages = validationResult.getAllErrors().stream()
@@ -98,6 +95,5 @@ public class CollocationController {
     // DELETE http://localhost:3001/collocations/delete?collocation={collocationId}
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public void deleteCollocation(@RequestParam("collocation") @NotNull UUID collocationId) { collocationService.findByIdAndDelete(collocationId); }
 }

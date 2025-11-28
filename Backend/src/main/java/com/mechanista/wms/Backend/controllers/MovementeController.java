@@ -45,7 +45,6 @@ public class MovementeController {
     // GET http://localhost:3001/movements
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Page<Movement> getAllMovement(@PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable) {
         return movementService.findAll(pageable);
     } // pulire il json
@@ -53,13 +52,11 @@ public class MovementeController {
     // GET http://localhost:3001/movements/by-id?movement={movementId}
     @GetMapping("/by-id")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Movement getMovementById(@RequestParam("movement") UUID movementId) { return movementService.findById(movementId); }
 
     // GET http://localhost:3001/movements/by-product?product={productId}
     @GetMapping("/by-product")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Page<Movement> getProductById(@RequestParam("product") Product productId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByProductId(productId, pageable);
     }
@@ -67,7 +64,6 @@ public class MovementeController {
     // GET http://localhost:3001/movements/by-date?movementDate={date}
     @GetMapping("/by-date")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Page<Movement> getPalletById(@RequestParam("movementDate") LocalDate date, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByDate(date, pageable);
     }
@@ -75,7 +71,6 @@ public class MovementeController {
     // GET http://localhost:3001/movements/by-user?user={userId}
     @GetMapping("/by-user")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ENGINEER')")
     public Page<Movement> getByUserId(@RequestParam("user") UUID userId, @PageableDefault(size = 10, direction = Sort.Direction.ASC)Pageable pageable) {
         return movementService.findByUserId(userId, pageable);
     }

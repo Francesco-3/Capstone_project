@@ -68,7 +68,6 @@ public class ShelfController {
         return shelfService.findByRackId(rackId);
     }
 
-
     // PUT http://localhost:3001/shelfs/update?shelf={shelfId}
     @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)

@@ -1,9 +1,17 @@
-import { Container } from "react-bootstrap";
+import EngineerSections from '../../../components/EngineerSections'
+import { Container, Row, Col } from 'react-bootstrap'
+import { Outlet } from "react-router-dom"
 
 export default function EngineerWarehouse() {
   return (
-    <div className="d-flex w-100 h-100 bg-light">
-      <h2>Warehouse</h2>
-    </div>
-  )
+        <Container fluid className="p-0 vh-100 d-flex m-0">
+            <Row className="mx-0 p-3 w-100 h-100">
+                <Col xs={11} sm={10} md={6} lg={8} xl={10} xxl={12} className="p-0 d-flex flex-column">
+                    <EngineerSections />
+
+                    <Outlet />
+                </Col>
+            </Row>
+        </Container>
+    )
 }
