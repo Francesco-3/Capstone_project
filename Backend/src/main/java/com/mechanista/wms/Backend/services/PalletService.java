@@ -1,6 +1,7 @@
 package com.mechanista.wms.Backend.services;
 
 import com.mechanista.wms.Backend.entities.Pallet;
+import com.mechanista.wms.Backend.entities.Rack;
 import com.mechanista.wms.Backend.entities.Section;
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.exceptions.NotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -63,6 +65,15 @@ public class PalletService {
     public Pallet findByPalletCode(String palletCode) {
         return palletRepository.findByPalletCode(palletCode)
                 .orElseThrow(() -> new NotFoundException("Pallet con codice " + palletCode + " non trovato!"));
+    }
+
+    public List<Pallet> findBySectionId(Section sectionId) {
+        List<Pallet> pallets = this.palletRepository.findBySectionId(sectionId);
+        if (pallets.isEmpty()) {
+            throw new NotFoundException("Nessun prodotto trovato per la data di inserimento: ");
+        }
+
+        return pallets;
     }
 
     // UPDATE

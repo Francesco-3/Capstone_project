@@ -1,6 +1,7 @@
 package com.mechanista.wms.Backend.services;
 
 import com.mechanista.wms.Backend.entities.*;
+import com.mechanista.wms.Backend.entities.enums.MovementType; // Import necessario
 import com.mechanista.wms.Backend.exceptions.BadRequestException;
 import com.mechanista.wms.Backend.exceptions.NotFoundException;
 import com.mechanista.wms.Backend.payloads.CollocationDTO;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Import necessario
 
 import java.util.List;
 import java.util.Optional;
@@ -54,12 +56,12 @@ public class CollocationService {
         Optional<Collocation> existingCollocation = collocationRepository
                 .findByProductIdAndShelfIdAndPalletId(product, shelf, pallet);
 
-        if (existingCollocation.isPresent()) {
+       /* if (existingCollocation.isPresent()) {
             UUID found = existingCollocation.get().getId_collocation();
             if (existingCollocationId.isEmpty() || !existingCollocationId.get().equals(found)) {
                 throw new BadRequestException("Il prodotto  è già collocato nella posizione specificata!");
             }
-        }
+        }*/
 
         // popolo e ritorno l'entità
         Collocation newCollocation = new Collocation();
@@ -71,7 +73,7 @@ public class CollocationService {
         return newCollocation;
     }
 
-    // CREATE
+    // CREATE (Metodo originale per la creazione manuale di Collocation)
     public Collocation saveCollocation(CollocationDTO payload) {
         Collocation newCollocation = this.mapToEntity(payload, Optional.empty());
         Collocation saved = collocationRepository.save(newCollocation);
@@ -79,6 +81,79 @@ public class CollocationService {
         log.info("Collocazione creata con successo per Prodotto ID {}!", saved.getProductId().getId_product());
         return saved;
     }
+
+    // ***************************************************************
+    // *** METODO AGGIUNTO: Gestisce l'aggiornamento della Collocazione ***
+    // ***************************************************************
+    @Transactional
+    public Collocation handleMovement(Product product, Shelf shelf, Pallet pallet, int quantityChange, MovementType type) {
+
+        // 1. Cerca la collocazione esistente
+        Optional<Collocation> existingCollocationOpt;
+
+        if (shelf != null && pallet == null) {
+            // Ricerca per ripiano (usato nella Sezione A)
+            existingCollocationOpt = collocationRepository.findByProductIdAndShelfId(product, shelf);
+        } else if (pallet != null) {
+            // Ricerca per pallet (usato altrove, ma gestito in modo generico)
+            existingCollocationOpt = collocationRepository.findByProductIdAndShelfIdAndPalletId(product, shelf, pallet);
+        } else {
+            throw new BadRequestException("La collocazione richiede uno ShelfId o un PalletId.");
+        }
+
+        Collocation collocation;
+        int newQuantity;
+
+        if (type == MovementType.INBOUND) {
+            // --- MOVIMENTO DI CARICO (INBOUND) ---
+            if (existingCollocationOpt.isPresent()) {
+                // Collocazione esistente: incrementa la quantità
+                collocation = existingCollocationOpt.get();
+                newQuantity = collocation.getQuantity() + quantityChange;
+                collocation.setQuantity(newQuantity);
+                collocation = collocationRepository.save(collocation);
+            } else {
+                // Nuova collocazione: crea un nuovo record
+                collocation = new Collocation();
+                collocation.setProductId(product);
+                collocation.setShelfId(shelf);
+                collocation.setPalletId(pallet);
+                collocation.setQuantity(quantityChange);
+                collocation = collocationRepository.save(collocation);
+                log.info("Creata nuova collocazione per prodotto {} sul ripiano/pallet", product.getProductCode());
+            }
+        } else if (type == MovementType.OUTBOUND) {
+            // --- MOVIMENTO DI SCARICO (OUTBOUND) ---
+            if (existingCollocationOpt.isEmpty()) {
+                throw new BadRequestException("Nessuna collocazione trovata per il prodotto " + product.getProductCode() + " nella posizione specificata per lo scarico.");
+            }
+
+            collocation = existingCollocationOpt.get();
+            newQuantity = collocation.getQuantity() - quantityChange;
+
+            if (newQuantity < 0) {
+                throw new BadRequestException("Quantità di scarico (" + quantityChange + ") superiore alla quantità disponibile nella collocazione (" + collocation.getQuantity() + ")!");
+            } else if (newQuantity == 0) {
+                // Quantità esaurita: elimina la Collocazione dal DB
+                collocationRepository.delete(collocation);
+                log.info("Collocazione eliminata (quantità a zero) per prodotto {}", product.getProductCode());
+                return null;
+            } else {
+                // Quantità residua: aggiorna la quantità
+                collocation.setQuantity(newQuantity);
+                collocation = collocationRepository.save(collocation);
+                log.info("Collocazione per prodotto {} aggiornata a quantità {}", product.getProductCode(), newQuantity);
+            }
+        } else {
+            throw new BadRequestException("Tipo di movimento non supportato per l'aggiornamento della collocazione.");
+        }
+
+        return collocation;
+    }
+    // ***************************************************************
+    // *** FINE METODO AGGIUNTO ***
+    // ***************************************************************
+
 
     // READ
     public Page<Collocation> findAll(Pageable pageable) {

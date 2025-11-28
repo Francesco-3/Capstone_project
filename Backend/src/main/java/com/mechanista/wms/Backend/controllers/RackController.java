@@ -62,7 +62,6 @@ public class RackController {
         return rackService.findBySectionId(sectionId);
     }
 
-
     // GET http://localhost:3001/racks/by-code?rackCode={rackCode}
     @GetMapping("/by-code")
     @ResponseStatus(HttpStatus.OK)

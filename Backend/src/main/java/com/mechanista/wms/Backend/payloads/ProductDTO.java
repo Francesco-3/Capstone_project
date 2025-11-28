@@ -3,8 +3,10 @@ package com.mechanista.wms.Backend.payloads;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record ProductDTO(
+        UUID idProduct,
         @NotBlank(message = "Il codice del prodotto è obbligatorio!")
         @Size(max = 10, message = "Il codice seriale del prodotto deve essere di massimo 10 caratteri!")
         String productCode,

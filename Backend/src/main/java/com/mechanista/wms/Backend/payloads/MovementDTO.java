@@ -7,13 +7,11 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record MovementDTO(
-        @NotNull(message = "L'id dell'operatore è obbligatorio!")
         UUID userId,
 
         UUID shelfId,
         UUID palletId,
 
-        @NotNull(message = "L'id del prodotto è obbligatorio!")
         UUID productId,
 
         @NotNull(message = "Il tipo di movimento è obbligatorio! (Prelievo, Aggiunta)")

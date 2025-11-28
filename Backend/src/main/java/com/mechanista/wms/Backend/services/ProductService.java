@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Import necessario
 
 import java.time.LocalDate;
 import java.util.List;
@@ -106,6 +107,30 @@ public class ProductService {
         log.info("Il prodotto è stato aggiornato correttamente");
         return modifierProduct;
     }
+
+    // *** METODI AGGIUNTI PER LA GESTIONE DELLO STOCK TOTALE ***
+    @Transactional
+    public void increaseTotalStock(UUID productId, int quantity) {
+        Product product = this.findById(productId);
+        product.setStock(product.getStock() + quantity);
+        productRepository.save(product);
+        log.info("Stock totale per prodotto {} aumentato a {}", product.getProductCode(), product.getStock());
+    }
+
+    @Transactional
+    public void decreaseTotalStock(UUID productId, int quantity) {
+        Product product = this.findById(productId);
+        int newStock = product.getStock() - quantity;
+
+        if (newStock < 0) {
+            throw new BadRequestException("Scarico non consentito: lo stock totale del prodotto " + product.getProductCode() + " non può diventare negativo.");
+        }
+
+        product.setStock(newStock);
+        productRepository.save(product);
+        log.info("Stock totale per prodotto {} diminuito a {}", product.getProductCode(), product.getStock());
+    }
+    // *** FINE METODI AGGIUNTI ***
 
     // DELETE
     public void findByIdAndDelete(UUID productId) {

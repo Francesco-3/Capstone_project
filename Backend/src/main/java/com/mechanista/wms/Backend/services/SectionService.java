@@ -90,13 +90,13 @@ public class SectionService {
        /* if (rackRepository.findBySectionId(found).isPresent()) {
             throw new BadRequestException("Impossibile eliminare la sezione '" + found.getSectionCode() +
                     "' perché è assegnata a uno o più rack.");
-        }*/
+        }
 
         // controllo che la sezione non sia assegnata a nessun pallet
         if (palletRepository.findBySectionId(found).isPresent()) {
             throw new BadRequestException("Impossibile eliminare la sezione '" + found.getSectionCode() +
                     "' perché è assegnata a uno o più pallet.");
-        }
+        }*/
 
         // elimino la sezione
         sectionRepository.delete(found);

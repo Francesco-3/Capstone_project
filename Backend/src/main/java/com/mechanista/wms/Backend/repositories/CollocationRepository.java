@@ -14,6 +14,7 @@ public interface CollocationRepository extends JpaRepository<Collocation, UUID> 
     Page<Collocation> findByPalletId(Pallet palletId, Pageable pageable);
 
     Optional<Collocation> findByProductIdAndShelfIdAndPalletId(Product productId, Shelf shelfId, Pallet palletId);
+    Optional<Collocation> findByProductIdAndShelfId(Product productId, Shelf shelfId);
 
     boolean existsByShelfId(Shelf shelfId);
     boolean existsByPalletId(Pallet palletId);
