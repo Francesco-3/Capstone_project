@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react' // Importazione corretta di React hooks
-import { useNavigate } from 'react-router-dom' // Assicurati di importare useNavigate da react-router-dom
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Row, Col, Form, Card, Alert, Spinner } from 'react-bootstrap'
 import avatar from '../../../assets/image/avatar.png'
-import '../../../components/css/Me.css' // Mantenuto per le classi come 'fx-block' e 'toggle'
+import '../../../components/css/Me.css'
 
 export default function MechanicalMe() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   
   // STATO PER I DATI DEL PROFILO E DEL FORM
-  const [profileData, setProfileData] = useState(null); // Dati dell'utente corrente
+  const [profileData, setProfileData] = useState(null);
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -19,15 +19,13 @@ export default function MechanicalMe() {
   
   // STATO PER L'INTERAZIONE
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null); // { variant: 'success'/'danger', text: '...' }
+  const [msg, setMsg] = useState(null);
   const [error, setError] = useState(null);
 
-  // Carica i dati dell'utente corrente all'avvio
   useEffect(() => {
     fetchMe();
   }, []); 
 
-  // Aggiorna lo stato dei campi quando i dati del profilo vengono caricati
   useEffect(() => {
     if (profileData) {
       setUsername(profileData.username || "");
@@ -56,7 +54,7 @@ export default function MechanicalMe() {
       }
 
       const data = await response.json();
-      setProfileData(data); // Salva l'oggetto completo dell'utente
+      setProfileData(data);
       setError(null);
 
     } catch (err) {
